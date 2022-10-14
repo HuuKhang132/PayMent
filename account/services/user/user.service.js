@@ -69,6 +69,18 @@ module.exports = {
 			handler: require('./actions/signin.rest.action'),
 		},
 
+		signout: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/External/User/Signout',
+				auth: false,
+			},
+			params: {
+
+			},
+			handler: require('./actions/signout.action'),
+		},
+
 		forgotPassword: {
 			rest: {
 				method: 'POST',
