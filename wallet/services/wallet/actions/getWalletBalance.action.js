@@ -4,7 +4,7 @@ const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = async function (ctx) {
 	try {
-		const payload = ctx.params.body;
+		const payload = ctx.params.params;
 		const filter = payload;
 		let walletInfo;
 		walletInfo = await this.broker.call('v1.WalletModel.findMany', [filter]);
@@ -12,15 +12,15 @@ module.exports = async function (ctx) {
 			return {
 				code: 1001,
 				message: 'Thất bại',
-                items: []
 			};
 		}
 
 		return {
 			code: 1000,
 			message: 'Thành công',
-			items:[{balance: walletInfo[0].balance}]
-
+			items: {
+				balance: walletInfo[0].balance
+			}
 		};
 	} catch (err) {
         console.log('ERR', err);

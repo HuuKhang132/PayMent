@@ -1,10 +1,10 @@
 const DbService = require('moleculer-db');
 const MongooseAdapter = require('moleculer-db-adapter-mongoose');
 const MongooseAction = require('moleculer-db-adapter-mongoose-action');
-const JwtBlacklistModel = require('./model/jwtBlacklist.model')
+const JwtModel = require('./model/jwt.model')
 
 module.exports = {
-	name: 'JwtBlacklistModel',
+	name: 'JwtModel',
 
 	version: 1,
 
@@ -16,7 +16,7 @@ module.exports = {
 		keepAlive: true,
 	}),
 
-	model: JwtBlacklistModel,
+	model: JwtModel,
 
 	/**
 	 * Settings

@@ -49,17 +49,11 @@ module.exports = {
 
 		getUserInfo: {
 			rest: {
-				method: 'POST',
-				fullPath: '/v1/Internal/Wallet/GetUserInfo',
+				method: 'GET',
+				fullPath: '/v1/Internal/Wallet/GetUserInfo/:userId',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					id: 'number',
 				},
 			},
 			handler: require('./actions/getUserInfo.rest.action'),
@@ -67,15 +61,9 @@ module.exports = {
 
 		getWalletBalance: {
 			rest: {
-				method: 'POST',
-				fullPath: '/v1/Internal/Wallet/GetWalletBalance',
+				method: 'GET',
+				fullPath: '/v1/Internal/Wallet/GetWalletBalance/:id',
 				auth: false,
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					userId: 'number',
-				},
 			},
 			handler: require('./actions/getWalletBalance.action'),
 		},
@@ -117,7 +105,43 @@ module.exports = {
 				},
 			},
 			handler: require('./actions/transfer.action'),
-		}
+		},
+
+		topup: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/Internal/Wallet/Topup',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					amount: 'number',
+				},
+			},
+			handler: require('./actions/topup.action'),
+		}, 
+
+		withdraw: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/Internal/Wallet/Withdraw',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					amount: 'number',
+				},
+			},
+			handler: require('./actions/withdraw.action'),
+		}, 
 	},
 
 	/**

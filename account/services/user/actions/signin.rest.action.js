@@ -3,7 +3,7 @@ const _ = require('lodash');
 const { MoleculerError } = require('moleculer').Errors;
 const bcrypt = require('bcrypt')
 const JsonWebToken = require('jsonwebtoken');
-
+const uuid = require('uuid')
 
 module.exports = async function (ctx) {
 	try {
@@ -29,16 +29,23 @@ module.exports = async function (ctx) {
 			};
         }
 
+        const jwtid = uuid.v4();
         const accessToken = JsonWebToken.sign(
             {
-                email: userInfo[0].email,
-                phone: userInfo[0].phone,
                 username: userInfo[0].username,
                 id: userInfo[0].id,
             }, 
             process.env.USER_JWT_SECRETKEY, 
-            { expiresIn: '24h' }
+            { 
+                expiresIn: '24h',
+                jwtid: jwtid,
+            }
         );
+
+        //lưu lại id, userId, expiredAt của token vừa tạo để xác thực sau này
+        await this.broker.call('v1.JwtModel.create', [
+            { jwtId: jwtid, userId: userInfo[0].id, expiredAt: Date.now() + 24*60*60*1000}
+        ])
 
 		return {
 			code: 1000,

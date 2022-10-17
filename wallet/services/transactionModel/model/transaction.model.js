@@ -31,6 +31,12 @@ const Schema = mongoose.Schema({
         require: true,
         default: null,
 	},
+	type: {
+		type: String,
+		require: true,
+		enum: _.values(transactionConstant.TYPE),
+		default: "",
+	}
 }, {
 	collection: 'transaction',
 	versionKey: false,

@@ -10,7 +10,7 @@ module.exports = {
 	/**
 	 * Settings
 	 */
-	settings: {
+	settings: { 
 	},
 
 	/**
@@ -41,10 +41,10 @@ module.exports = {
 			params: {
 				body: {
 					$$type: 'object',
-					email: 'string',
+					email: 'email',
 					phone: 'string',
 					username: 'string',
-					password: 'string',
+					password: { type: "string", min: 6, max: 20 },
 					fullname: 'string',
 					gender: 'string',
 					avatar: 'string',
@@ -73,12 +73,37 @@ module.exports = {
 			rest: {
 				method: 'POST',
 				fullPath: '/v1/External/User/Signout',
-				auth: false,
+				auth: {
+					strategies: ['Default'],
+					mode: 'required'
+				},
 			},
 			params: {
 
 			},
 			handler: require('./actions/signout.action'),
+		},
+
+		update: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/External/User/Update',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required'
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					email: 'email',
+					phone: 'string',
+					fullname: 'string',
+					gender: 'string',
+					avatar: 'string',
+				},
+			},
+			handler: require('./actions/updateUserInfo.action'),
 		},
 
 		forgotPassword: {
@@ -91,7 +116,7 @@ module.exports = {
 				body: {
 					$$type: 'object',
 					username: 'string',
-					email: 'string',
+					email: 'email',
 				},
 			},
 			handler: require('./actions/forgotPassword.action'),
@@ -109,8 +134,8 @@ module.exports = {
 			params: {
 				body: {
 					$$type: 'object',
-					newPassword: 'string',
-					reNewPassword: 'string',
+					newPassword: { type: "string", min: 6, max: 20 },
+					reNewPassword: { type: "string", min: 6, max: 20 },
 				},
 			},
 			handler: require('./actions/resetPassword.action'),

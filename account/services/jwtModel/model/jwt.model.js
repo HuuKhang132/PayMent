@@ -2,18 +2,22 @@ const mongoose = require('mongoose');
 const _ = require('lodash');
 
 const Schema = mongoose.Schema({
-	jwt: {
+	jwtId: {
 		type: String,
 		require: true,
 		unique: true,
 	},
+	userId: {
+		type: Number,
+		require: true,
+	},
 	expiredAt: {
-		type: Date,
+		type: Number,
 		require: true,
 		default: null,
 	},
 }, {
-	collection: 'jwt_blacklist',
+	collection: 'jwt',
 	versionKey: false,
 	timestamps: true,
 });

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { MoleculerError } = require('moleculer').Errors;
 const orderConstant = require('../../orderModel/constants/orderConstant');
+const transactionConstant = require('../constants/transactionConstant')
 
 module.exports = async function (ctx) {
 	try {
@@ -14,12 +15,20 @@ module.exports = async function (ctx) {
 				message: 'Thất bại',
 			};
 		}
-
+		
 		const userWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: user.id}])
 		if (_.get(userWallet, 'id', null) === null) {
 			return {
 				code: 1001,
 				message: 'Thất bại',
+			};
+		}
+
+		if ( userWallet.balance < order.total ){
+			return {
+				code: 1001,
+				message: 'Số tiền trong tài khoản không đủ!',
+				item: order,
 			};
 		}
 
@@ -37,35 +46,10 @@ module.exports = async function (ctx) {
                 walletId: userWallet.id,
                 destWalletId: providerWallet.id,
                 total: order.total,
-                orderId: order.id
+                orderId: order.id,
+				type: transactionConstant.TYPE.TRANSFER
             }
         })
-
-        // if (transactionCreate.code === 1001){
-        //     return {
-		// 		code: 1001,
-		// 		message: 'Thất bại',
-		// 	};
-        // }
-
-        // const paidOrder = await this.broker.call('v1.OrderModel.findOneAndUpdate', [
-        //     { id: order.id },
-        //     { paymentStatus: orderConstant.PAYMENTSTATUS.PAID },
-        //     { new: true }
-        // ])
-
-		// if (paidOrder.code === 1001) {
-		// 	return {
-		// 		code: 1001,
-		// 		message: 'Thất bại',
-		// 	};
-		// }
-
-		// return {
-		// 	code: 1000,
-		// 	message: 'Thành công',
-        //     item: paidOrder,
-		// };
 
 		return transactionCreate
 

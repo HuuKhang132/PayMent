@@ -2,14 +2,17 @@ const _ = require('lodash');
 
 const { MoleculerError } = require('moleculer').Errors;
 const bcrypt = require('bcrypt')
-const JsonWebToken = require('jsonwebtoken');
-
-const accountConstant = require("../constants/accountConstant")
 
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
-        const hashPasswork = await bcrypt.hash(payload.password, 10)
+        
+		let phoneNumber = /(([0-9]{10})\b)/g;
+        if (phoneNumber.test(payload.phone) == false ) {
+            throw new MoleculerError(`Phone number is invalid`);
+        }
+		
+		const hashPasswork = await bcrypt.hash(payload.password, 10)
 		const accountCreateInfo = {
 			email: payload.email,
 			phone: payload.phone,
@@ -35,28 +38,6 @@ module.exports = async function (ctx) {
         }
         console.log("create thanh cong")
         await this.broker.call('v1.Wallet.create', {walletCreateInfo})
-
-		// const miniProgramTokenInfo = {
-		// 	id: miniProgramCreate.id,
-		// 	scope: miniProgramCreate.scope,
-		// 	miniProgramId: miniProgramCreate.miniProgramId,
-		// };
-
-		// const miniProgramToken = JsonWebToken.sign(miniProgramTokenInfo, process.env.MINIPROGRAM_JWT_SECRETKEY);
-		// miniProgramCreate = await this.broker.call('v1.MiniProgramInfoModel.findOneAndUpdate', [
-		// 	{
-		// 		id: miniProgramCreate.id,
-		// 	},
-		// 	{
-		// 		miniProgramToken,
-		// 	}]);
-
-		// if (_.get(miniProgramCreate, 'id', null) === null) {
-		// 	return {
-		// 		code: 1001,
-		// 		message: 'Thất bại',
-		// 	};
-		// }
 
 		return {
 			code: 1000,

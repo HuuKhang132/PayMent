@@ -4,10 +4,9 @@ const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = async function (ctx) {
 	try {
-		const payload = ctx.params.body;
-		const filter = payload;
+		const payload = ctx.params.params;
 		let userInfo;
-		userInfo = await this.broker.call('v1.AccountModel.findMany', [filter]);
+		userInfo = await this.broker.call('v1.AccountModel.findMany', [{ id: payload.userId }]);
 		if (_.isNil(userInfo) || _.get(userInfo[0], 'id', null) == null) {
 			return {
 				code: 1001,

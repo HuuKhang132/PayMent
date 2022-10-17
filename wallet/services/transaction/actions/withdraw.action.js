@@ -3,7 +3,6 @@ const { MoleculerError } = require('moleculer').Errors;
 const changeBalanceConstant = require('../constants/changeBalanceConstant')
 const transactionConstant = require('../constants/transactionConstant')
 const otpConstant = require('../../otpModel/constants/otpConstant')
-const orderConstant = require('../constants/orderConstant')
 
 module.exports = async function (ctx) {
 	try {
@@ -43,22 +42,6 @@ module.exports = async function (ctx) {
             ]);
         }
 
-        const insProviderWalletBalance = await this.broker.call('v1.Wallet.changeWalletBalance', { 
-            body: {
-                walletId: transaction.destWalletId,
-                amount: transaction.total,
-                type: changeBalanceConstant.CHANGE.INC,
-            } 
-        })
-        
-        if ( insProviderWalletBalance.code = 1001 ) {
-            transaction = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
-                { id: transaction.id },
-                { status: transactionConstant.STATUS.FAILED },
-                { new: true }
-            ]);
-        }
-
         transaction = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
             { id: transaction.id },
             { status: transactionConstant.STATUS.SUCCEED },
@@ -69,13 +52,6 @@ module.exports = async function (ctx) {
             { id: otp.id }, 
             { status: otpConstant.STATUS.DEACTIVE }
         ])
-
-        if ( transaction.orderId !== null) {
-            await this.broker.call('v1.OrderModel.findOneAndUpdate', [
-                { id: transaction.orderId, paymentStatus: orderConstant.PAYMENTSTATUS.UNPAID }, 
-                { status: orderConstant.PAYMENTSTATUS.PAID }
-            ])
-        }
 
 		return {
 			code: 1000,

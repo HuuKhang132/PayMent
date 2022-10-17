@@ -5,9 +5,10 @@ const { MoleculerError } = require('moleculer').Errors;
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params;
-        let userInfo
-		userInfo = await this.broker.call('v1.AccountModel.findMany', [{id: payload.id}]);
-		if (_.isNil(userInfo) || _.get(userInfo[0], 'id', null) == null) {
+        let jwtInfo
+		jwtInfo = await this.broker.call('v1.JwtModel.findOne', [{jwtId: payload.jti}]);
+		console.log("jwtInfo   ", jwtInfo)
+		if ( _.get(jwtInfo, 'jwtId', null) == null || jwtInfo.expiredAt < Date.now() ) {
 			throw new MoleculerError('Thông tin xác thực không hợp lệ', 401, null, null);
 		}
 		return true;
