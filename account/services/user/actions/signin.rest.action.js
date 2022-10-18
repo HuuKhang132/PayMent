@@ -9,18 +9,16 @@ module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
 
-        //const username = payload.username;
-		let userInfo;
-		userInfo = await this.broker.call('v1.AccountModel.findMany', [{username: payload.username}]);
+		const userInfo = await this.broker.call('v1.AccountModel.findOne', [{username: payload.username}]);
 
-        if (_.isNil(userInfo) && _.get(userInfo[0], 'id', null) == null) {
+        if (_.get(userInfo, 'id', null) == null) {
 			return {
 				code: 1001,
 				message: 'Sai tài khoản hoặc mật khẩu',
 			};
 		}
 
-        const passwordConpare = await bcrypt.compare(payload.password, userInfo[0].password)
+        const passwordConpare = await bcrypt.compare(payload.password, userInfo.password)
 
         if (passwordConpare === false) {
             return {
@@ -32,8 +30,8 @@ module.exports = async function (ctx) {
         const jwtid = uuid.v4();
         const accessToken = JsonWebToken.sign(
             {
-                username: userInfo[0].username,
-                id: userInfo[0].id,
+                username: userInfo.username,
+                id: userInfo.id,
             }, 
             process.env.USER_JWT_SECRETKEY, 
             { 

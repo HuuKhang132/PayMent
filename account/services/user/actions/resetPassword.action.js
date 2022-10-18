@@ -18,8 +18,7 @@ module.exports = async function (ctx) {
 
         const hashPasswork = await bcrypt.hash(payload.newPassword, 10)
 
-		let userInfo;
-		userInfo = await this.broker.call('v1.AccountModel.findOneAndUpdate', [
+		const userInfo = await this.broker.call('v1.AccountModel.findOneAndUpdate', [
             { id: user.id },
             { $set: { password: hashPasswork } },
             { new: true }

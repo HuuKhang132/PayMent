@@ -40,18 +40,6 @@ module.exports = async function (ctx) {
             }
         })
 
-        // if (transactionCreate.code === 1001){
-        //     return {
-		// 		code: 1001,
-		// 		message: 'Thất bại',
-		// 	};
-        // }
-
-		// return {
-		// 	code: 1000,
-		// 	message: 'Thành công',
-		// };
-
 		return transactionCreate
 
 	} catch (err) {

@@ -22,8 +22,7 @@ module.exports = async function (ctx) {
 			gender: payload.gender,
 			avatar: payload.avatar,
 		};
-		let accountCreate;
-		accountCreate = await this.broker.call('v1.AccountModel.create', [accountCreateInfo]);
+		let accountCreate = await this.broker.call('v1.AccountModel.create', [accountCreateInfo]);
 
         if (_.get(accountCreate, 'id', null) === null) {
 			return {

@@ -6,8 +6,7 @@ module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.params;
 		const filter = payload;
-		let walletInfo;
-		walletInfo = await this.broker.call('v1.WalletModel.findMany', [filter]);
+		const walletInfo = await this.broker.call('v1.WalletModel.findMany', [filter]);
 		if (_.isNil(walletInfo) && _.get(walletInfo[0], 'id', null) == null) {
 			return {
 				code: 1001,

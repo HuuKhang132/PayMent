@@ -8,7 +8,7 @@ module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
         const user = ctx.meta.auth.credentials
-        let otp = await this.broker.call('v1.OtpModel.findOne', [{ userId: user.id, otp: payload.otp, transactionId: payload.transactionId, status: otpConstant.STATUS.ACTIVE }])
+        const otp = await this.broker.call('v1.OtpModel.findOne', [{ userId: user.id, otp: payload.otp, transactionId: payload.transactionId, status: otpConstant.STATUS.ACTIVE }])
         if (_.get(otp, 'id', null) === null) {
 			return {
 				code: 1001,

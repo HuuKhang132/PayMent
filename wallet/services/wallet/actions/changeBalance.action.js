@@ -10,8 +10,7 @@ module.exports = async function (ctx) {
 		let changeType
 		payload.type === changeBalanceConstant.CHANGE.INC ? changeType = 1 : changeType = -1;
 
-		let updatedWallet;
-		updatedWallet = await this.broker.call('v1.WalletModel.findOneAndUpdate', [
+		const updatedWallet = await this.broker.call('v1.WalletModel.findOneAndUpdate', [
             { id: payload.walletId },
             { $inc: {balance: changeType * payload.amount} },
             { new: true}

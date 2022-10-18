@@ -15,8 +15,7 @@ module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
         console.log("payload  ", payload)
-		let userInfo;
-		userInfo = await this.broker.call('v1.AccountModel.findOne', [{username: payload.username, email: payload.email}]);
+		const userInfo = await this.broker.call('v1.AccountModel.findOne', [{username: payload.username, email: payload.email}]);
 
         console.log("find Done", userInfo)
 

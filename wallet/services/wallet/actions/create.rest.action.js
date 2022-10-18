@@ -5,11 +5,9 @@ const { MoleculerError } = require('moleculer').Errors;
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params;
-        console.log("payload   ", payload)
 		const walletCreateInfo = payload.walletCreateInfo;
-		let walletCreate;
-		walletCreate = await this.broker.call('v1.WalletModel.create', [walletCreateInfo]);
 
+		const walletCreate = await this.broker.call('v1.WalletModel.create', [walletCreateInfo]);
 		if (_.get(walletCreate, 'id', null) === null) {
 			return {
 				code: 1001,

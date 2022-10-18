@@ -33,8 +33,7 @@ module.exports = async function (ctx) {
 			paymentMethod: payload.paymentMethod,
 			providerId: payload.providerId
 		};
-		let orderCreate;
-		orderCreate = await this.broker.call('v1.OrderModel.create', [orderCreateInfo]);
+		const orderCreate = await this.broker.call('v1.OrderModel.create', [orderCreateInfo]);
 		console.log("orderCreate   ", orderCreate)
 
         if (_.get(orderCreate, 'id', null) === null) {

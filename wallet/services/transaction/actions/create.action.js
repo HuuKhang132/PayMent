@@ -37,7 +37,7 @@ module.exports = async function (ctx) {
 			};
 		}
 
-        let otp = await this.broker.call('v1.OtpModel.create', [
+        const otp = await this.broker.call('v1.OtpModel.create', [
             {
                 userId: payload.userId,
                 otp: otpGenerator.generate(6, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false }),
