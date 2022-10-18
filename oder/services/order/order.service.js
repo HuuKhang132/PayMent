@@ -98,6 +98,25 @@ module.exports = {
 			handler: require('./actions/getOrder.action'),
 		},
 
+		napasSucessful: {
+			rest: {
+				method: 'GET',
+				fullPath: '/v1/External/Order/Napas',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+                    orderId: 'number',
+					status: 'string'
+				},
+			},
+			handler: require('./actions/napasSucessful.action'),
+		},
+
 		checkExpiredOrder: {
 			handler: require('./actions/checkExpiredOrder.action'),
 		},
