@@ -28,6 +28,7 @@
     "dotenv": "^16.0.3",
     "ioredis": "^4.27.9",
     "moleculer": "^0.14.16",
+    "moleculer-cron": "^0.0.2",
     "moleculer-db": "^0.8.19",
     "moleculer-db-adapter-mongoose": "^0.8.14",
     "moleculer-db-adapter-mongoose-action": "^1.0.9",
