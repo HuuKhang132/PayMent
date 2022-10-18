@@ -32,11 +32,6 @@ module.exports = {
 		},
 
 		create: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/External/Wallet/Create',
-				auth: false,
-			},
 			params: {
 				walletCreateInfo: {
 					$$type: 'object',
@@ -69,14 +64,6 @@ module.exports = {
 		},
 
 		changeWalletBalance: {
-			// rest: {
-			// 	method: 'POST',
-			// 	fullPath: '/v1/Internal/Wallet/ChangeWalletBalance',
-			// 	auth: {
-			// 		strategies: ['Default'],
-			// 		mode: 'required', // 'required', 'optional', 'try'
-			// 	},
-			// },
 			params: {
 				body: {
 					$$type: 'object',

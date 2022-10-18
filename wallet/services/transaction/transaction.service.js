@@ -32,11 +32,6 @@ module.exports = {
 		},
 
 		create: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/External/Transaction/Create',
-				auth: false,
-			},
 			params: {
 				body: {
 					$$type: 'object',
