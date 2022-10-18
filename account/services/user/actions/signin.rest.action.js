@@ -42,7 +42,7 @@ module.exports = async function (ctx) {
 
         //lưu lại id, userId, expiredAt của token vừa tạo để xác thực sau này
         await this.broker.call('v1.JwtModel.create', [
-            { jwtId: jwtid, userId: userInfo[0].id, expiredAt: Date.now() + 24*60*60*1000}
+            { jwtId: jwtid, userId: userInfo.id, expiredAt: Date.now() + 24*60*60*1000}
         ])
 
 		return {

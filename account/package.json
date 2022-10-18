@@ -29,6 +29,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.16",
+    "moleculer-cron": "^0.0.2",
     "moleculer-db": "^0.8.19",
     "moleculer-db-adapter-mongoose": "^0.8.14",
     "moleculer-db-adapter-mongoose-action": "^1.0.9",

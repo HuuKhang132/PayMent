@@ -38,6 +38,12 @@ module.exports = async function (ctx) {
 			};
 		}
 
+        await this.broker.call('v1.WalletModel.findOneAndUpdate', [
+            { userId: updatedUser.id },
+            { $set: { fullname: updatedUser.fullname } },
+            { new: true }
+        ])
+
 		return {
 			code: 1000,
 			message: `Thành công!`,
