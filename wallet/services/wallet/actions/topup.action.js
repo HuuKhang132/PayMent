@@ -5,14 +5,11 @@ const transactionConstant = require('../../transactionModel/constants/transactio
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
-        const user = ctx.meta.auth.credentials
 
-		const updatedWallet = await this.broker.call('v1.WalletModel.findOneAndUpdate', [
-            { userId: user.id },
-            { $inc: { balance: payload.amount } },
-            { new: true }
+        const wallet = await this.broker.call('v1.WalletModel.findOne', [
+            { userId: payload.userId },
         ])
-		if (_.get(updatedWallet, 'id', null) === null) {
+		if (_.get(wallet, 'id', null) === null) {
 			return {
 				code: 1001,
 				message: 'Thất bại',
@@ -21,16 +18,40 @@ module.exports = async function (ctx) {
 
 		const transactionCreate = await this.broker.call('v1.Transaction.create', {
             body: {
-				userId: user.id,
-                walletId: updatedWallet.id,
+				userId: payload.userId,
+                destWalletId: wallet.id,
                 total: payload.amount,
-                type: transactionConstant.TYPE.TOPUP
+                type: transactionConstant.TYPE.TOPUP,
+				supplier: payload.supplier
             }
-        })
+        }, { timeout: 30*1000 })
+		if ( transactionCreate.code == 1001 ) {
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			};
+		}
 
-		return transactionCreate
+		//GỌI API BÊN NGÂN HÀNG: YÊU CẦU CHUYỂN TIỀN ĐẾN VÍ
+		//SAU KHI NGÂN HÀNG XỬ LÍ SẼ TRẢ VỀ KẾT QUẢ GIAO DỊCH -> XỬ LÍ SỐ DƯ TRONG VÍ
+		const bankResponse = await this.broker.call('v1.Transaction.bankTopup', {
+			body: {
+				transactionId: transactionCreate.item.id
+			}
+		})
+
+		const topupTransaction = await this.broker.call('v1.Transaction.topup', {
+			body: {
+				transactionId: bankResponse.data.transactionId,
+				supplierTransactionId: bankResponse.data.supplierTransactionId,
+				status: bankResponse.data.status,
+			}
+		})
+
+		return topupTransaction
 
 	} catch (err) {
+		console.log("err  ", err)
 		if (err.name === 'MoleculerError') throw err;
 		throw new MoleculerError(`[Wallet] Top Up: ${err.message}`);
 	}

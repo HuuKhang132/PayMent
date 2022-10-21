@@ -16,7 +16,7 @@ module.exports = async function (ctx) {
 			};
 		}
 		
-		const userWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: user.id}])
+		const userWallet = await this.broker.call('v1.Wallet.getWallet', {userId: user.id})
 		if (_.get(userWallet, 'id', null) === null) {
 			return {
 				code: 1001,
@@ -32,7 +32,7 @@ module.exports = async function (ctx) {
 			};
 		}
 
-		const providerWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: order.providerId}])
+		const providerWallet = await this.broker.call('v1.Wallet.getWallet', {userId: order.providerId})
 		if (_.get(providerWallet, 'id', null) === null) {
 			return {
 				code: 1001,
@@ -49,7 +49,7 @@ module.exports = async function (ctx) {
                 orderId: order.id,
 				type: transactionConstant.TYPE.TRANSFER
             }
-        })
+        }, { timeout: 30*1000 })
 
 		return transactionCreate
 

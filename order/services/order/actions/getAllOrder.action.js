@@ -23,6 +23,6 @@ module.exports = async function (ctx) {
 
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;
-		throw new MoleculerError(`[Order] Create: ${err.message}`);
+		throw new MoleculerError(`[Order] Get All: ${err.message}`);
 	}
 };

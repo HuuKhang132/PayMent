@@ -1,10 +1,11 @@
+const mongoose = require('mongoose');
 const DbService = require('moleculer-db');
 const MongooseAdapter = require('moleculer-db-adapter-mongoose');
 const MongooseAction = require('moleculer-db-adapter-mongoose-action');
-const JwtModel = require('./model/jwt.model')
+const WalletHistoryModel = require('./model/walletHistory.model');
 
 module.exports = {
-	name: 'JwtModel',
+	name: 'WalletHistoryModel',
 
 	version: 1,
 
@@ -16,7 +17,7 @@ module.exports = {
 		keepAlive: true,
 	}),
 
-	model: JwtModel,
+	model: WalletHistoryModel,
 
 	/**
 	 * Settings

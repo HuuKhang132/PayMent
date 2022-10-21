@@ -43,7 +43,7 @@ module.exports = async function (ctx, route, req, authHandler) {
 			return true;
 		}
 	});
-
+	console.log("action   ", action)
 	let isValid = false;
 	switch (authConf.mode) {
 		case 'required':
@@ -64,6 +64,7 @@ module.exports = async function (ctx, route, req, authHandler) {
 		default:
 			break;
 	}
+	console.log("decoded   ", decoded)
 	let data;
 	try {
 		if (isValid === true) {

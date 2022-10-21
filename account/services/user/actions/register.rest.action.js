@@ -23,7 +23,6 @@ module.exports = async function (ctx) {
 			avatar: payload.avatar,
 		};
 		let accountCreate = await this.broker.call('v1.AccountModel.create', [accountCreateInfo]);
-
         if (_.get(accountCreate, 'id', null) === null) {
 			return {
 				code: 1001,
@@ -35,8 +34,13 @@ module.exports = async function (ctx) {
             userId: accountCreate.id,
             fullname: accountCreate.fullname,
         }
-        console.log("create thanh cong")
-        await this.broker.call('v1.Wallet.create', {walletCreateInfo})
+        const walletCreate = await this.broker.call('v1.Wallet.create', {walletCreateInfo})
+		if (_.get(walletCreate, 'id', null) === null) {
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			};
+		}
 
 		return {
 			code: 1000,

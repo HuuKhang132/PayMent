@@ -37,7 +37,7 @@ module.exports = {
 		create: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/Order/Create',
+				fullPath: '/v1/Order/Create',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -53,13 +53,14 @@ module.exports = {
                     providerId: 'number'
 				},
 			},
+			timeout: 60*1000,
 			handler: require('./actions/create.action'),
 		},
 
         pay: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/Order/Pay',
+				fullPath: '/v1/Order/Pay',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -77,7 +78,7 @@ module.exports = {
 		getAllOrder: {
 			rest: {
 				method: 'GET',
-				fullPath: '/v1/External/Order/GetAllOrder',
+				fullPath: '/v1/Order/GetAllOrder',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -89,7 +90,7 @@ module.exports = {
 		getOrder: {
 			rest: {
 				method: 'GET',
-				fullPath: '/v1/External/Order/GetOrder/:id',
+				fullPath: '/v1/Order/GetOrder/:id',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -101,7 +102,7 @@ module.exports = {
 		napasSucessful: {
 			rest: {
 				method: 'GET',
-				fullPath: '/v1/External/Order/Napas',
+				fullPath: '/v1/Order/Napas',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'

@@ -35,7 +35,7 @@ module.exports = {
 		register: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/User/Register',
+				fullPath: '/v1/User/Register',
 				auth: false,
 			},
 			params: {
@@ -56,7 +56,7 @@ module.exports = {
 		signin: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/User/Signin',
+				fullPath: '/v1/User/Signin',
 				auth: false,
 			},
 			params: {
@@ -64,6 +64,7 @@ module.exports = {
 					$$type: 'object',
 					username: 'string',
 					password: 'string',
+					//deviceId: 'string'
 				},
 			},
 			handler: require('./actions/signin.rest.action'),
@@ -72,7 +73,7 @@ module.exports = {
 		signout: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/User/Signout',
+				fullPath: '/v1/User/Signout',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required'
@@ -87,7 +88,7 @@ module.exports = {
 		update: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/User/Update',
+				fullPath: '/v1/User/Update',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required'
@@ -103,13 +104,24 @@ module.exports = {
 					avatar: 'string',
 				},
 			},
+			queue: {
+				amqp: {
+					fetch: 1
+				},
+				retry: {
+					max_retry: 3,
+					delay: (retry_count) => {	
+						return retry_count * 5000;
+				  	},
+				},
+			},
 			handler: require('./actions/updateUserInfo.action'),
 		},
 
 		forgotPassword: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/User/ForgotPassword',
+				fullPath: '/v1/User/ForgotPassword',
 				auth: false,
 			},
 			params: {
@@ -125,7 +137,7 @@ module.exports = {
 		resetPassword: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/User/ResetPassword',
+				fullPath: '/v1/User/ResetPassword',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'

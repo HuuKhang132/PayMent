@@ -1,8 +1,16 @@
 const _ = require('lodash');
 const mongoose = require('mongoose')
+const Queue = require('moleculer-rabbitmq')
+
+const queueMixin = Queue({
+	connection: process.env.RABBITMQ_URI,
+	asyncActions: true,
+  });
 
 module.exports = {
 	name: 'Wallet',
+
+	mixins: [queueMixin],
 
 	version: 1,
 
@@ -45,7 +53,7 @@ module.exports = {
 		getUserInfo: {
 			rest: {
 				method: 'GET',
-				fullPath: '/v1/Internal/Wallet/GetUserInfo/:userId',
+				fullPath: '/v1/Wallet/GetUserInfo/:userId',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -57,28 +65,50 @@ module.exports = {
 		getWalletBalance: {
 			rest: {
 				method: 'GET',
-				fullPath: '/v1/Internal/Wallet/GetWalletBalance/:id',
-				auth: false,
+				fullPath: '/v1/Wallet/GetWalletBalance',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
 			},
 			handler: require('./actions/getWalletBalance.action'),
 		},
 
+		getWallet: {  //gọi từ các node khác
+			params:{
+				userId: 'number'
+			},
+			handler: require('./actions/getWallet.action'),
+		},
+
 		changeWalletBalance: {
+			queue: {
+				amqp: {
+					fetch: 1
+				},
+				retry: {
+					max_retry: 3,
+					delay: (retry_count) => {	
+						return retry_count * 5000;
+				  	},
+				},
+			},
 			params: {
 				body: {
 					$$type: 'object',
 					walletId: 'number',
 					amount: 'number',
 					type: 'string',
+					transactionId: 'number'
 				},
 			},
 			handler: require('./actions/changeBalance.action'),
 		}, 
 
-		transfer: {
+		transferApi: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/Internal/Wallet/Transfer',
+				fullPath: '/v1/Wallet/Transfer',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -91,13 +121,13 @@ module.exports = {
 					amount: 'number',
 				},
 			},
-			handler: require('./actions/transfer.action'),
+			handler: require('./actions/transferApi.action'),
 		},
 
-		topup: {
+		topupApi: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/Internal/Wallet/Topup',
+				fullPath: '/v1/Wallet/Topup',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -107,15 +137,16 @@ module.exports = {
 				body: {
 					$$type: 'object',
 					amount: 'number',
+					supplier: 'string',
 				},
 			},
-			handler: require('./actions/topup.action'),
+			handler: require('./actions/topupApi.action'),
 		}, 
 
 		withdraw: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/Internal/Wallet/Withdraw',
+				fullPath: '/v1/Wallet/Withdraw',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -125,10 +156,109 @@ module.exports = {
 				body: {
 					$$type: 'object',
 					amount: 'number',
+					supplier: 'string'
 				},
 			},
 			handler: require('./actions/withdraw.action'),
 		}, 
+
+		walletToBankApi: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/Wallet/WalletToBank',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					amount: 'number',
+					supplier: 'string',
+				},
+			},
+			handler: require('./actions/walletToBankApi.action'),
+		}, 
+
+		bankToWallet: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/Wallet/BankToWallet',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					amount: 'number',
+					supplier: 'string',
+					destUserId: 'number',
+				},
+			},
+			handler: require('./actions/bankToWallet.action'),
+		}, 
+
+		bankToBank: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/Wallet/BankToBank',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					amount: 'number',
+					supplier: 'string',
+					destSupplier: 'string',
+				},
+			},
+			handler: require('./actions/bankToBank.action'),
+		},
+
+		topup: {
+			params: {
+				body: {
+					$$type: 'object',
+					userId: 'number',
+					amount: 'number',
+					supplier: 'string',
+				},
+			},
+			handler: require('./actions/topup.action'),
+		}, 
+
+		transfer: {
+			params: {
+				body: {
+					$$type: 'object',
+					userId: 'number',
+					destUserId: 'number',
+					amount: 'number',
+					isAuth: 'string|optional'
+				},
+			},
+			handler: require('./actions/transfer.action'),
+		},
+
+		walletToBank: {
+			params: {
+				body: {
+					$$type: 'object',
+					userId: 'number',
+					amount: 'number',
+					supplier: 'string',
+					isAuth: 'string|optional'
+				},
+			},
+			handler: require('./actions/walletToBank.action'),
+		}, 
+		
 	},
 
 	/**

@@ -36,18 +36,23 @@ module.exports = {
 				body: {
 					$$type: 'object',
 					userId: "number",
-					walletId: 'number',
+					walletId: 'number|optional',
+					destWalletId: 'number|optional',
                     total: 'number',
+					orderId: 'number|optional',
 					type: 'string',
+					supplier: 'string|optional',
+					supplierTransactionId: 'string|optional',
+					isAuth: 'string|optional'
 				},
 			},
 			handler: require('./actions/create.action'),
 		},
 
-		transact: {
+		transactApi: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/Transaction/Transact',
+				fullPath: '/v1/Transaction/Transact',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -60,13 +65,13 @@ module.exports = {
                     transactionId: 'number',
 				},
 			},
-			handler: require('./actions/transact.action'),
+			handler: require('./actions/transactApi.action'),
 		},
 
-		withdraw: {
+		walletToBankApi: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/External/Transaction/Withdraw',
+				fullPath: '/v1/Transaction/WalletToBank',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -76,10 +81,64 @@ module.exports = {
 				body: {
 					$$type: 'object',
                     transactionId: 'number',
+					otp: 'number'
 				},
 			},
-			handler: require('./actions/withdraw.action'),
+			handler: require('./actions/walletToBankApi.action'),
 		},
+
+		topup: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/Transaction/Topup',
+				auth: false
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					transactionId: 'number',
+					supplierTransactionId: 'string',
+					status: 'string'
+				},
+			},
+			handler: require('./actions/topup.action'),
+		}, 
+
+		bankTopup: {
+			params: {
+				body: {
+					$$type: 'object',
+					transactionId: 'number',
+				},
+			},
+			handler: require('./actions/bankTopUp.action'),
+		}, 
+
+		transact: {
+			params: {
+				body: {
+					$$type: 'object',
+					userId: 'number',
+					otp: 'number|optional',
+                    transactionId: 'number',
+					isAuth: 'string|optional'
+				},
+			},
+			handler: require('./actions/transact.action'),
+		},
+
+		walletToBank: {
+			params: {
+				body: {
+					$$type: 'object',
+					userId: 'number',
+                    transactionId: 'number',
+					otp: 'number|optional',
+					isAuth: 'string|optional'
+				},
+			},
+			handler: require('./actions/walletToBank.action'),
+		}
 	},
 
 	/**

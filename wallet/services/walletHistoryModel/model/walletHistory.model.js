@@ -1,47 +1,30 @@
 const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
 const _ = require('lodash');
-const accountConstant = require("../constants/accountConstant")
-require('mongoose-type-email');
 
 autoIncrement.initialize(mongoose);
 
 const Schema = mongoose.Schema({
-	email: {
-		type: mongoose.SchemaTypes.Email,
-		require: true,
-		unique: true,
-	},
-	phone: {
-		type: String,
-		require: true,
-        unique: true,
-		default: null,
-	},
-	username: {
-		type: String,
-		require: true,
-        unique: true
-	},
-	password: {
-		type: String,
+	walletId: {
+		type: Number,
 		require: true,
 	},
-	fullname: {
-		type: String,
-		default: null,
+    transactionId: {
+		type: Number,
+        require: true,
 	},
-	gender: {
-		type: String,
-		enum: _.values(accountConstant.GENDER),
-	},
-
-	avatar: {
-		type: String,
+	balanceBefore: {
+		type: Number,
 		require: true,
+		default: 0,
+	},
+    balanceAfter: {
+		type: Number,
+		require: true,
+		default: 0,
 	},
 }, {
-	collection: 'account',
+	collection: 'wallet_history',
 	versionKey: false,
 	timestamps: true,
 });

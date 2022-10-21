@@ -30,7 +30,6 @@ module.exports = async function (ctx) {
                 new: true
             }
         ])
-
         if (_.get(updatedUser, 'id', null) === null) {
 			return {
 				code: 1001,
@@ -38,11 +37,17 @@ module.exports = async function (ctx) {
 			};
 		}
 
-        await this.broker.call('v1.WalletModel.findOneAndUpdate', [
+        const updatedWallet = await this.broker.call('v1.WalletModel.findOneAndUpdate', [
             { userId: updatedUser.id },
             { $set: { fullname: updatedUser.fullname } },
             { new: true }
         ])
+        if (_.get(updatedWallet, 'id', null) === null) {
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			};
+		}
 
 		return {
 			code: 1000,

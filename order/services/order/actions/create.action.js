@@ -70,7 +70,7 @@ module.exports = async function (ctx) {
                 orderId: orderCreate.id,
 				type: transactionConstant.TYPE.TRANSFER
             }
-        }) 
+        }, { timeout: 30*1000 }) 
 
 		return transactionCreate
 	} catch (err) {

@@ -5,10 +5,9 @@ const transactionConstant = require('../../transactionModel/constants/transactio
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
-        const user = ctx.meta.auth.credentials
-
+		
 		const userWallet = await this.broker.call('v1.WalletModel.findOne', [
-            { userId: user.id },
+            { userId: payload.userId },
         ])
 		if (_.get(userWallet, 'id', null) === null) {
 			return {
@@ -19,17 +18,19 @@ module.exports = async function (ctx) {
 
 		const transactionCreate = await this.broker.call('v1.Transaction.create', {
             body: {
-				userId: user.id,
+				userId: payload.userId,
                 walletId: userWallet.id,
                 total: payload.amount,
-                type: transactionConstant.TYPE.WITHDRAW,
-				supplier: payload.supplier
+                type: transactionConstant.TYPE.WALLETOBANK,
+				supplier: payload.supplier,
+                isAuth: payload.isAuth
             }
         }, { timeout: 30*1000 })
 
 		return transactionCreate
 
 	} catch (err) {
+        
 		if (err.name === 'MoleculerError') throw err;
 		throw new MoleculerError(`[Wallet] Transfer: ${err.message}`);
 	}

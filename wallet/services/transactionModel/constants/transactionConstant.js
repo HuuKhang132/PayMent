@@ -8,5 +8,6 @@ module.exports = {
 		TRANSFER: 'TRANSFER',
 		TOPUP: 'TOPUP',
 		WITHDRAW: 'WITHDRAW',
+		WALLETOBANK: 'WALLETOBANK '
 	}
 };

@@ -7,13 +7,15 @@ module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
         const transactionCreateInfo = {
-			walletId: payload.walletId,
+			walletId: payload.walletId ? payload.walletId : null,
 			destWalletId: payload.destWalletId ? payload.destWalletId: null,
 			total: payload.total,
             orderId: payload.orderId ? payload.orderId : null,
-			type: payload.type
+			type: payload.type,
+			supplier: payload.supplier ? payload.supplier : null,
+			supplierTransactionId: payload.supplierTransactionId ? payload.supplierTransactionId : null,
 		};
-		let transactionCreate;
+		let transactionCreate; 
 		transactionCreate = await this.broker.call('v1.TransactionModel.create', [transactionCreateInfo]);
 
         if (_.get(transactionCreate, 'id', null) === null) {
@@ -37,6 +39,31 @@ module.exports = async function (ctx) {
 			};
 		}
 
+		if ( payload.isAuth === "TRUE" ) {
+			let transaction
+			if ( transactionCreate.type === transactionConstant.TYPE.TRANSFER ) {
+				transaction = await this.broker.call('v1.Transaction.transact', {
+					body: {
+						userId: payload.userId,
+						transactionId: transactionCreate.id,
+						isAuth: payload.isAuth
+					}
+				})
+				return transaction
+			}
+
+			if ( transactionCreate.type === transactionConstant.TYPE.WALLETOBANK ) {
+				transaction = await this.broker.call('v1.Transaction.walletToBank', {
+					body: {
+						userId: payload.userId,
+						transactionId: transactionCreate.id,
+						isAuth: payload.isAuth
+					}
+				})
+				return transaction
+			}
+		}
+
         const otp = await this.broker.call('v1.OtpModel.create', [
             {
                 userId: payload.userId,
@@ -44,6 +71,12 @@ module.exports = async function (ctx) {
                 transactionId: transactionCreate.id,
             }
         ])
+		if (_.get(otp, 'otp', null) === null) {
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			};
+		}
 
 		return {
 			code: 1000,
@@ -54,7 +87,8 @@ module.exports = async function (ctx) {
             }
 		};
 	} catch (err) {
+		console.log("err   ", err)
 		if (err.name === 'MoleculerError') throw err;
-		throw new MoleculerError(`[Order] Create: ${err.message}`);
+		throw new MoleculerError(`[Transaction] Create: ${err.message}`);
 	}
 };

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const tokenConstant = require('../constants/tokenConstant')
 
 const Schema = mongoose.Schema({
 	jwtId: {
@@ -16,8 +17,24 @@ const Schema = mongoose.Schema({
 		require: true,
 		default: null,
 	},
+	deviceId: {
+		type: String,
+		require: true,
+		default: null
+	},
+	state: {
+		type: String,
+		require: true,
+		enum: _.values(tokenConstant.STATE),
+		default: tokenConstant.STATE.SIGNEDIN
+	},
+	logoutTime: {
+		type: Date,
+		require: true,
+		default: null
+	}
 }, {
-	collection: 'jwt',
+	collection: 'token',
 	versionKey: false,
 	timestamps: true,
 });

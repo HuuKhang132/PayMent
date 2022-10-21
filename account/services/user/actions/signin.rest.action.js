@@ -1,5 +1,4 @@
 const _ = require('lodash');
-
 const { MoleculerError } = require('moleculer').Errors;
 const bcrypt = require('bcrypt')
 const JsonWebToken = require('jsonwebtoken');
@@ -32,6 +31,7 @@ module.exports = async function (ctx) {
             {
                 username: userInfo.username,
                 id: userInfo.id,
+                //deviceId: payload.deviceId
             }, 
             process.env.USER_JWT_SECRETKEY, 
             { 
@@ -41,18 +41,27 @@ module.exports = async function (ctx) {
         );
 
         //lưu lại id, userId, expiredAt của token vừa tạo để xác thực sau này
-        await this.broker.call('v1.JwtModel.create', [
-            { jwtId: jwtid, userId: userInfo.id, expiredAt: Date.now() + 24*60*60*1000}
+        const tokenCreate = await this.broker.call('v1.TokenModel.create', [
+            { 
+                jwtId: jwtid, 
+                userId: userInfo.id, 
+                expiredAt: Date.now() + 24*60*60*1000,
+                //deviceId: deviceId
+            }
         ])
+        if (_.get(tokenCreate, 'jwtId', null) == null) {
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			};
+		}
 
 		return {
 			code: 1000,
 			message: 'Thành công',
-            items: [
-                {
-                    accessToken: accessToken,
-                }
-            ]
+            items: {
+                accessToken: accessToken,
+            }
 		};
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;

@@ -5,9 +5,8 @@ const transactionConstant = require('../../transactionModel/constants/transactio
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
-        const user = ctx.meta.auth.credentials
 
-        const userWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: user.id}])
+        const userWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: payload.userId}])
 		if (_.get(userWallet, 'id', null) === null) {
 			return {
 				code: 1001,
@@ -32,13 +31,14 @@ module.exports = async function (ctx) {
 
 		const transactionCreate = await this.broker.call('v1.Transaction.create', {
             body: {
-				userId: user.id,
+				userId: payload.userId,
                 walletId: userWallet.id,
                 destWalletId: destinationWallet.id,
                 total: payload.amount,
-				type: transactionConstant.TYPE.TRANSFER
+				type: transactionConstant.TYPE.TRANSFER,
+				isAuth: payload.isAuth
             }
-        })
+        }, { timeout: 30*1000 })
 
 		return transactionCreate
 

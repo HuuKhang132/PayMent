@@ -5,11 +5,16 @@ const otpConstant = require('../../otpModel/constants/otpConstant')
 module.exports = async function (ctx) {
 	try {
         const date = Date.now()
-        await this.broker.call('v1.OtpModel.deleteMany', [
-            { status: otpConstant.STATUS.DEACTIVE },
-        ])
+        const deletedOtp = await this.broker.call('v1.OtpModel.deleteMany', [
+            { 
+				$or: [
+					{ status: otpConstant.STATUS.DEACTIVE },
+					{ createdAt: { $lt: new Date(date - 5*60*1000) } }
+				]
+			}
+        ], { timeout: 20*1000 })
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;
-		throw new MoleculerError(`[Order] Check Expired: ${err.message}`);
+		throw new MoleculerError(`[OTP] Check Deactive: ${err.message}`);
 	}
 };

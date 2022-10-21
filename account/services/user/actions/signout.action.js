@@ -1,12 +1,14 @@
 const _ = require('lodash');
-
 const { MoleculerError } = require('moleculer').Errors;
+const tokenConstant = require('../../tokenModel/constants/tokenConstant')
 
 module.exports = async function (ctx) {
 	try {
 		const user = ctx.meta.auth.credentials
-        const signedOut = await this.broker.call('v1.JwtModel.delete', [
-            { jwtId: user.jti }
+        const signedOut = await this.broker.call('v1.TokenModel.findOneAndUpdate', [
+            { jwtId: user.jti },
+			{ $set: { state: tokenConstant.STATE.SIGNEDOUT, logoutTime: new Date() } },
+			{ new: true }
         ])
 		console.log("signedOut  ", signedOut)
 

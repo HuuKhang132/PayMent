@@ -4,10 +4,9 @@ const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = async function (ctx) {
 	try {
-		const payload = ctx.params.params;
-		const filter = payload;
-		const walletInfo = await this.broker.call('v1.WalletModel.findMany', [filter]);
-		if (_.isNil(walletInfo) && _.get(walletInfo[0], 'id', null) == null) {
+		const user = ctx.meta.auth.credentials;
+		const walletInfo = await this.broker.call('v1.WalletModel.findOne', [{ userId: user.id }]);
+		if ( _.get(walletInfo, 'id', null) == null) {
 			return {
 				code: 1001,
 				message: 'Thất bại',
@@ -18,7 +17,7 @@ module.exports = async function (ctx) {
 			code: 1000,
 			message: 'Thành công',
 			items: {
-				balance: walletInfo[0].balance
+				balance: walletInfo.balance
 			}
 		};
 	} catch (err) {

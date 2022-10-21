@@ -36,6 +36,16 @@ const Schema = mongoose.Schema({
 		require: true,
 		enum: _.values(transactionConstant.TYPE),
 		default: "",
+	},
+	supplierTransactionId: {
+		type: String,
+		require: true,
+		default: null,
+	},
+	supplier: {
+		type: String,
+		require: true,
+		default: null,
 	}
 }, {
 	collection: 'transaction',
