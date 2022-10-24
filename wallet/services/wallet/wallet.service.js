@@ -102,6 +102,7 @@ module.exports = {
 					transactionId: 'number'
 				},
 			},
+			timeout: 30*1000,
 			handler: require('./actions/changeBalance.action'),
 		}, 
 
@@ -121,6 +122,7 @@ module.exports = {
 					amount: 'number',
 				},
 			},
+			timeout: 90*1000,
 			handler: require('./actions/transferApi.action'),
 		},
 
@@ -140,6 +142,7 @@ module.exports = {
 					supplier: 'string',
 				},
 			},
+			timeout: 90*1000,
 			handler: require('./actions/topupApi.action'),
 		}, 
 
@@ -159,6 +162,7 @@ module.exports = {
 					supplier: 'string'
 				},
 			},
+			timeout: 90*1000,
 			handler: require('./actions/withdraw.action'),
 		}, 
 
@@ -178,6 +182,7 @@ module.exports = {
 					supplier: 'string',
 				},
 			},
+			timeout: 90*1000,
 			handler: require('./actions/walletToBankApi.action'),
 		}, 
 
@@ -198,6 +203,7 @@ module.exports = {
 					destUserId: 'number',
 				},
 			},
+			timeout: 90*1000,
 			handler: require('./actions/bankToWallet.action'),
 		}, 
 
@@ -218,6 +224,7 @@ module.exports = {
 					destSupplier: 'string',
 				},
 			},
+			timeout: 90*1000,
 			handler: require('./actions/bankToBank.action'),
 		},
 
@@ -230,6 +237,7 @@ module.exports = {
 					supplier: 'string',
 				},
 			},
+			timeout: 60*1000,
 			handler: require('./actions/topup.action'),
 		}, 
 
@@ -243,6 +251,7 @@ module.exports = {
 					isAuth: 'string|optional'
 				},
 			},
+			timeout: 60*1000,
 			handler: require('./actions/transfer.action'),
 		},
 
@@ -256,6 +265,7 @@ module.exports = {
 					isAuth: 'string|optional'
 				},
 			},
+			timeout: 60*1000,
 			handler: require('./actions/walletToBank.action'),
 		}, 
 		

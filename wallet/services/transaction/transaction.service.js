@@ -104,14 +104,11 @@ module.exports = {
 			handler: require('./actions/topup.action'),
 		}, 
 
-		bankTopup: {
+		bankApiExample: {
 			params: {
-				body: {
-					$$type: 'object',
-					transactionId: 'number',
-				},
+	
 			},
-			handler: require('./actions/bankTopUp.action'),
+			handler: require('./actions/bankApiExample.action'),
 		}, 
 
 		transact: {
@@ -138,6 +135,17 @@ module.exports = {
 				},
 			},
 			handler: require('./actions/walletToBank.action'),
+		},
+
+		updateTransaction: {
+			params: {
+				body: {
+					$$type: 'object',
+					status: 'string',
+                    supplierTransactionId: 'string',
+				},
+			},
+			handler: require('./actions/updateTransaction.action'),
 		}
 	},
 

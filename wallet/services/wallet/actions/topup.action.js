@@ -34,15 +34,11 @@ module.exports = async function (ctx) {
 
 		//GỌI API BÊN NGÂN HÀNG: YÊU CẦU CHUYỂN TIỀN ĐẾN VÍ
 		//SAU KHI NGÂN HÀNG XỬ LÍ SẼ TRẢ VỀ KẾT QUẢ GIAO DỊCH -> XỬ LÍ SỐ DƯ TRONG VÍ
-		const bankResponse = await this.broker.call('v1.Transaction.bankTopup', {
-			body: {
-				transactionId: transactionCreate.item.id
-			}
-		})
+		const bankResponse = await this.broker.call('v1.Transaction.bankApiExample')
 
 		const topupTransaction = await this.broker.call('v1.Transaction.topup', {
 			body: {
-				transactionId: bankResponse.data.transactionId,
+				transactionId: transactionCreate.item.id,
 				supplierTransactionId: bankResponse.data.supplierTransactionId,
 				status: bankResponse.data.status,
 			}

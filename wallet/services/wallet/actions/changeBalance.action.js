@@ -2,9 +2,9 @@ const _ = require('lodash');
 
 const { MoleculerError } = require('moleculer').Errors;
 const changeBalanceConstant = require('../constants/changeBalanceConstant')
-let lock
 
 module.exports = async function (ctx) {
+	let lock
 	try {
         const payload = ctx.params.body;
 

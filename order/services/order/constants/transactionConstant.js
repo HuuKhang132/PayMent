@@ -3,5 +3,6 @@ module.exports = {
 		TRANSFER: 'TRANSFER',
 		TOPUP: 'TOPUP',
 		WITHDRAW: 'WITHDRAW',
+		NAPAS: 'NAPAS'
 	}
 };

@@ -1,11 +1,17 @@
 const _ = require('lodash');
 const mongoose = require('mongoose')
 const Cron = require("moleculer-cron");
+const Queue = require('moleculer-rabbitmq')
+
+const queueMixin = Queue({
+	connection: process.env.RABBITMQ_URI,
+	asyncActions: true,
+  });
 
 module.exports = {
 	name: 'Order',
 
-	mixins: [Cron],
+	mixins: [Cron, queueMixin],
 
 	version: 1,
 
@@ -84,6 +90,13 @@ module.exports = {
 					mode: 'required', // 'required', 'optional', 'try'
 				},
 			},
+			params: {
+				query: {
+					$$type: 'object',
+					page: 'string',
+					limit: 'string',
+				}
+			},
 			handler: require('./actions/getAllOrder.action'),
 		},
 
@@ -101,12 +114,9 @@ module.exports = {
 
 		napasSucessful: {
 			rest: {
-				method: 'GET',
+				method: 'POST',
 				fullPath: '/v1/Order/Napas',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
+				auth: false,
 			},
 			params: {
 				body: {
@@ -119,7 +129,29 @@ module.exports = {
 		},
 
 		checkExpiredOrder: {
+			queue: {
+				amqp: {
+					fetch: 1
+				},
+				retry: {
+					max_retry: 3,
+					delay: (retry_count) => {	
+						return retry_count * 5000;
+				  	},
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+                    orderId: 'number'
+				}
+			},
+			timeout: 20*1000,
 			handler: require('./actions/checkExpiredOrder.action'),
+		},
+
+		getListExpiredOrderId: {
+			handler: require('./actions/getListExpiredOrderId.action'),
 		},
 
 	},
@@ -127,10 +159,18 @@ module.exports = {
 	crons: [
         {
             name: "CheckExpiredOrder",
-            cronTime: '*/1 * * * *',
+            cronTime: '*/5 * * * * *',
             async onTick() {
 				try {
-					await this.call('v1.Order.checkExpiredOrder')
+					const listExpiredOrderId = await this.call('v1.Order.getListExpiredOrderId')
+					console.log("listExpiredOrderId  ", listExpiredOrderId)
+					listExpiredOrderId.forEach( async(orderId) => {
+						await this.call('v1.Order.checkExpiredOrder', {
+							body: {
+								orderId: orderId
+							}
+						})
+					});
 				} catch (err) {
 					console.log(err);
 				}
@@ -157,7 +197,6 @@ module.exports = {
 * Service created lifecycle event handler
 */
 	created() {
-
 	},
 
 	/**

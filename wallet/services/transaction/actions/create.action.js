@@ -39,6 +39,14 @@ module.exports = async function (ctx) {
 			};
 		}
 
+		if ( transactionCreate.type === transactionConstant.TYPE.NAPAS ) {
+			return {
+				code: 1000,
+				message: 'Thành công',
+				item: transactionCreate,
+			};
+		}
+
 		if ( payload.isAuth === "TRUE" ) {
 			let transaction
 			if ( transactionCreate.type === transactionConstant.TYPE.TRANSFER ) {

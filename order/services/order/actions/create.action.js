@@ -44,11 +44,22 @@ module.exports = async function (ctx) {
 		}
 
 		if ( payload.paymentMethod === orderConstant.PAYMENTMETHOD.BANK ){
+			const transactionCreate = await this.broker.call('v1.Transaction.create', {
+				body: {
+					userId: user.id,
+					total: orderCreate.total,
+					orderId: orderCreate.id,
+					type: transactionConstant.TYPE.NAPAS,
+					supplier: transactionConstant.TYPE.NAPAS
+				}
+			}, { timeout: 30*1000 }) 
 			return {
 				code: 1000,
 				message: 'Thành công',
 				item: {
-					url: "www.google.com"
+					url: "www.google.com",
+					transaction: transactionCreate.item,
+					order: orderCreate,
 				},
 			};
 		}

@@ -12,7 +12,6 @@ module.exports = async function (ctx) {
             code: 1000,
             message: 'Thành công',
             data: {
-                transactionId: payload.transactionId,
                 supplierTransactionId: supTransId,
                 status: "SUCCEED",
             }

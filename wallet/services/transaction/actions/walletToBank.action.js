@@ -31,11 +31,7 @@ module.exports = async function (ctx) {
         //GIẢ SỬ GỌI API CỦA NGÂN HÀNG
         //NGÂN HÀNG SẼ TRẢ VỀ KẾT QUẢ GIAO DỊCH
         //DỰA VÀO KẾT QUẢ TRẢ VỀ ĐỂ THỰC HIỆN CÁC TÁC VỤ TIẾP THEO
-        const bankResponse = await this.broker.call('v1.Transaction.bankTopup', {
-			body: {
-				transactionId: transaction.id
-			}
-		})
+        const bankResponse = await this.broker.call('v1.Transaction.bankApiExample')
 
         if (bankResponse.data.status === "SUCCEED") {
             const desUserWalletBalance = await this.broker.call('v1.Wallet.changeWalletBalance', { 
