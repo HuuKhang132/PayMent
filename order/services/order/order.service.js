@@ -159,7 +159,7 @@ module.exports = {
 	crons: [
         {
             name: "CheckExpiredOrder",
-            cronTime: '*/5 * * * * *',
+            cronTime: '0 30 */1 * * *',
             async onTick() {
 				try {
 					const listExpiredOrderId = await this.call('v1.Order.getListExpiredOrderId')

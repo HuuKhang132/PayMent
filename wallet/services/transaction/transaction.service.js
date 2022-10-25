@@ -1,8 +1,17 @@
 const _ = require('lodash');
 const mongoose = require('mongoose')
+const Cron = require("moleculer-cron");
+const Queue = require('moleculer-rabbitmq')
+
+const queueMixin = Queue({
+	connection: process.env.RABBITMQ_URI,
+	asyncActions: true,
+  });
 
 module.exports = {
 	name: 'Transaction',
+	
+	mixins: [Cron, queueMixin],
 
 	version: 1,
 
@@ -146,8 +155,56 @@ module.exports = {
 				},
 			},
 			handler: require('./actions/updateTransaction.action'),
-		}
+		},
+
+		checkExpiredTransaction: {
+			queue: {
+				amqp: {
+					fetch: 1
+				},
+				retry: {
+					max_retry: 3,
+					delay: (retry_count) => {	
+						return retry_count * 5000;
+				  	},
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+                    transactionId: 'number'
+				}
+			},
+			timeout: 20*1000,
+			handler: require('./actions/checkExpiredTransaction.action'),
+		},
+
+		getListExpiredTransactionId: {
+			handler: require('./actions/getListExpiredTransactionId.action'),
+		},
 	},
+
+	crons: [
+        {
+            name: "CheckExpiredTransaction",
+            cronTime: '0 0 */1 * * *',
+            async onTick() {
+				try {
+					const listExpiredTransactionId = await this.call('v1.Transaction.getListExpiredTransactionId')
+					console.log("listExpiredTransactionId  ", listExpiredTransactionId)
+					listExpiredTransactionId.forEach( async(transactionId) => {
+						await this.call('v1.Transaction.checkExpiredTransaction', {
+							body: {
+								transactionId: transactionId
+							}
+						})
+					});
+				} catch (err) {
+					console.log(err);
+				}
+            },
+        },
+    ],
 
 	/**
  * Events
