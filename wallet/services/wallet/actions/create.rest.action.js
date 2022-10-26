@@ -18,6 +18,7 @@ module.exports = async function (ctx) {
 		return {
 			code: 1000,
 			message: 'Thành công',
+			data: walletCreate
 		};
 	} catch (err) {
         console.log('ERR', err);

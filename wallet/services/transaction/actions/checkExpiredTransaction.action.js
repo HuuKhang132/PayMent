@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { MoleculerError } = require('moleculer').Errors;
-const transactionConstant = require('../constants/transactionConstant')
+const transactionConstant = require('../../transactionModel/constants/transactionConstant')
 
 module.exports = async function (ctx) {
     let lock;
@@ -9,12 +9,12 @@ module.exports = async function (ctx) {
 
         lock = await this.broker.cacher.lock(
 			`id_${payload.transactionId}`,
-			60*1000
+			20*1000
 		)
 
         const expiredTransaction = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
             { id: payload.transactionId },
-            { $set: { status: transactionConstant.STATUS.FAILED } }
+            { $set: { status: transactionConstant.STATUS.EXPIRED } }
         ], { timeout: 20*1000 })
 
 	} catch (err) {

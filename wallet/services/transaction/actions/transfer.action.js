@@ -5,8 +5,9 @@ const transactionConstant = require('../../transactionModel/constants/transactio
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
+		const user = ctx.meta.auth.credentials
 
-        const userWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: payload.userId}])
+        const userWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: user.id}])
 		if (_.get(userWallet, 'id', null) === null) {
 			return {
 				code: 1001,
@@ -21,7 +22,7 @@ module.exports = async function (ctx) {
 			};
         }
 
-		const destinationWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: payload.destUserId}])
+		const destinationWallet = await this.broker.call('v1.WalletModel.findOne', [{id: payload.destWalletId}])
 		if (_.get(destinationWallet, 'id', null) === null) {
 			return {
 				code: 1001,
@@ -31,7 +32,7 @@ module.exports = async function (ctx) {
 
 		const transactionCreate = await this.broker.call('v1.Transaction.create', {
             body: {
-				userId: payload.userId,
+				userId: user.id,
                 walletId: userWallet.id,
                 destWalletId: destinationWallet.id,
                 total: payload.amount,
@@ -40,7 +41,22 @@ module.exports = async function (ctx) {
             }
         }, { timeout: 30*1000 })
 
-		return transactionCreate
+		// return transactionCreate
+		if (transactionCreate.code === 1001){
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			}
+		}
+		
+		return {
+			code: 1000,
+			message: 'Thành công',
+            data: {
+                transaction: transactionCreate.data.transaction,
+                otp: transactionCreate.data.otp,
+            }
+		};
 
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;

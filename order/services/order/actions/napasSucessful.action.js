@@ -9,6 +9,20 @@ module.exports = async function (ctx) {
         console.log("payload  ", payload)
         
         if (payload.status === napasConstant.STATUS.SUCCEED ){
+            const updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
+                body: {
+                    transactionId: payload.transactionId,
+                    status: payload.status,
+                    supplierTransactionId: payload.supplierTransactionId
+                }
+            })
+            if ( updatedTransaction.code === 1001 ) {
+                return {
+                    code: 1001,
+                    message: 'Cập nhật Giao dịch thất bại!',
+                };
+            }
+
             const paidOrder = await this.broker.call('v1.OrderModel.findOneAndUpdate', [
                 { id: payload.orderId, paymentStatus: orderConstant.PAYMENTSTATUS.UNPAID }, 
                 { paymentStatus: orderConstant.PAYMENTSTATUS.PAID },
@@ -17,22 +31,7 @@ module.exports = async function (ctx) {
             if (_.get(paidOrder, 'id', null) === null) {
                 return {
                     code: 1001,
-                    message: 'Thất bại updateorder',
-                };
-            }
-
-            const updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
-                body: {
-                    transactionId: payload.transactionId,
-                    status: payload.status,
-                    supplierTransactionId: payload.supplierTransactionId
-                }
-            })
-            console.log("updatedTransaction  ", updatedTransaction)
-            if ( updatedTransaction.code === 1001 ) {
-                return {
-                    code: 1001,
-                    message: 'Thất bại updateTrans',
+                    message: 'Cập nhật Đơn hàng thất bại!',
                 };
             }
 

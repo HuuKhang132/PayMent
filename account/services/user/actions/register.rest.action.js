@@ -30,21 +30,29 @@ module.exports = async function (ctx) {
 			};
 		}
 
-        const walletCreateInfo = {
-            userId: accountCreate.id,
-            fullname: accountCreate.fullname,
-        }
-        const walletCreate = await this.broker.call('v1.Wallet.create', {walletCreateInfo})
-		if (_.get(walletCreate, 'id', null) === null) {
-			return {
-				code: 1001,
-				message: 'Thất bại',
-			};
-		}
+        // const walletCreateInfo = {
+        //     userId: accountCreate.id,
+        //     fullname: accountCreate.fullname,
+        // }
+        // const walletCreate = await this.broker.call('v1.Wallet.create', {walletCreateInfo})
+		// if ( walletCreate.code === 1001 ) { //tạo ví thất bại
+		// 	return {
+		// 		code: 1000,
+		// 		message: 'Tạo tài khoản thành công!',
+		// 	};
+		// }
+
+		// let updatedAccount = await this.broker.call('v1.AccountModel.findOneAndUpdate', [
+		// 	{ id: accountCreate.id },
+		// 	{
+		// 		$set: { walletId: walletCreate.data.id },
+		// 	},
+		// 	{ new: true }
+		// ])
 
 		return {
 			code: 1000,
-			message: 'Thành công',
+			message: 'Tạo tài khoản thành công!',
 		};
 	} catch (err) {
         console.log('ERR', err);

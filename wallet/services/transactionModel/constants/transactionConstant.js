@@ -3,6 +3,7 @@ module.exports = {
 		PENDING: 'PENDING',
 		SUCCEED: 'SUCCEED',
         FAILED: 'FAILED',
+		EXPIRED: 'EXPIRED'
 	},
 	TYPE: {
 		TRANSFER: 'TRANSFER',

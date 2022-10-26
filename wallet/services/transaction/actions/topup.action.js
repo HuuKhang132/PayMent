@@ -1,69 +1,101 @@
 const _ = require('lodash');
 const { MoleculerError } = require('moleculer').Errors;
 const changeBalanceConstant = require('../constants/changeBalanceConstant')
-const transactionConstant = require('../constants/transactionConstant')
-const otpConstant = require('../../otpModel/constants/otpConstant')
+const transactionConstant = require('../../transactionModel/constants/transactionConstant')
 
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
+        const user = ctx.meta.auth.credentials
+
+        const wallet = await this.broker.call('v1.WalletModel.findOne', [
+            { userId: user.id },
+        ])
+		if (_.get(wallet, 'id', null) === null) {
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			};
+		}
+
+		const transactionCreate = await this.broker.call('v1.Transaction.create', {
+            body: {
+				userId: user.id,
+                destWalletId: wallet.id,
+                total: payload.amount,
+                type: transactionConstant.TYPE.TOPUP,
+				supplier: payload.supplier
+            }
+        }, { timeout: 30*1000 })
+
+		if ( transactionCreate.code == 1001 ) {
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			};
+		}
+
+        const transaction = transactionCreate.data.transaction
+        console.log("transaction  ", transaction)
+
+		//GỌI API BÊN NGÂN HÀNG: YÊU CẦU CHUYỂN TIỀN ĐẾN VÍ
+		//SAU KHI NGÂN HÀNG XỬ LÍ SẼ TRẢ VỀ KẾT QUẢ GIAO DỊCH -> XỬ LÍ SỐ DƯ TRONG VÍ
+		const bankResponse = await this.broker.call('v1.Transaction.bankApiExample')
 
         let updatedTransaction
-        if ( payload.status === transactionConstant.STATUS.SUCCEED ) {
-            updatedTransaction = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
-                { id: payload.transactionId },
-                { 
-                    $set: {
-                        status: transactionConstant.STATUS.SUCCEED,
-                        supplierTransactionId: payload.supplierTransactionId,
-                    }
-                },
-                { new: true }
-            ])
-
+        if ( bankResponse.data.status === transactionConstant.STATUS.SUCCEED ) {
+            updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
+                body: {
+                    transactionId: transaction.id,
+                    status: transactionConstant.STATUS.SUCCEED,
+                    supplierTransactionId: bankResponse.data.supplierTransactionId
+                }
+            })
+            if ( updatedTransaction.code === 1001 ) {
+                return {
+                    code: 1001,
+                    message: 'Cập nhật Giao dịch thất bại!',
+                };
+            }
 
             const updatedWallet = await this.broker.call('v1.Wallet.changeWalletBalance', { 
                 body: {
-                    walletId: updatedTransaction.destWalletId,
-                    amount: updatedTransaction.total,
+                    walletId: transaction.destWalletId,
+                    amount: transaction.total,
                     type: changeBalanceConstant.CHANGE.INC,
-                    transactionId: updatedTransaction.id
+                    transactionId: transaction.id
                 } 
             }, { timeout: 20*1000 })
             if ( updatedWallet.code === 1001 ) {
-                const transactionFailed = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
-                    { id: updatedTransaction.id },
-                    { status: transactionConstant.STATUS.FAILED },
-                    { new: true }
-                ]);
-                if (!transactionFailed) {
-                    return {
-                        code: 1001,
-                        message: 'Thất bại! Cập nhật giao dịch [FAILD] không thành công!',
-                    };
-                }
+                return {
+                    code: 1001,
+                    message: 'Cập nhật số dư ví thất bại!',
+                };
             }
         }
 
-        if ( payload.status === transactionConstant.STATUS.FAILED ) {
-            updatedTransaction = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
-                { id: updatedTransaction.id },
-                { 
-                    $set: {
-                        status: transactionConstant.STATUS.FAILED,
-                        supplierTransactionId: payload.supplierTransactionId,
-                    }
-                },
-                { new: true }
-            ])
-            
+        if ( bankResponse.data.status === transactionConstant.STATUS.FAILED ) {
+            updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
+                body: {
+                    transactionId: transaction.id,
+                    status: transactionConstant.STATUS.FAILED,
+                    supplierTransactionId: bankResponse.data.supplierTransactionId
+                }
+            })
+            if ( _.get(updatedTransaction, 'id', null) === null ) {
+                return {
+                    code: 1001,
+                    message: 'Cập nhật Giao dịch thất bại!',
+                };
+            }
         }
 
-        console.log("updatedTransaction  ", updatedTransaction)
         return {
             code: 1000,
             message: 'Thành công',
-            item: updatedTransaction,
+            data: {
+                transaction: updatedTransaction,
+            }
         };
         
 	} catch (err) {

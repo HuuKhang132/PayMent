@@ -5,7 +5,6 @@ const transactionConstant = require('../constants/transactionConstant')
 
 module.exports = async function (ctx) {
 	try {
-		console.log("ctx.params   ", ctx.params)
 		const payload = ctx.params.body;
         const user = ctx.meta.auth.credentials
 
@@ -53,12 +52,18 @@ module.exports = async function (ctx) {
 					supplier: transactionConstant.TYPE.NAPAS
 				}
 			}, { timeout: 30*1000 }) 
+			if (transactionCreate.code === 1001){
+				return {
+					code: 1001,
+					message: 'Thất bại',
+				}
+			}
 			return {
 				code: 1000,
 				message: 'Thành công',
-				item: {
+				data: {
 					url: "www.google.com",
-					transaction: transactionCreate.item,
+					transaction: transactionCreate.data.transaction,
 					order: orderCreate,
 				},
 			};
@@ -68,7 +73,7 @@ module.exports = async function (ctx) {
 			return {
 				code: 1001,
 				message: 'Số tiền trong tài khoản không đủ!',
-				item: orderCreate,
+				data: orderCreate,
 			};
 		}
 
@@ -83,7 +88,22 @@ module.exports = async function (ctx) {
             }
         }, { timeout: 30*1000 }) 
 
-		return transactionCreate
+		//return transactionCreate
+		if (transactionCreate.code === 1001){
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			}
+		}
+
+		return {
+			code: transactionCreate.code,
+			message: transactionCreate.message,
+            data: {
+                transaction: transactionCreate.data.transaction,
+                otp: transactionCreate.data.otp,
+            }
+		};
 	} catch (err) {
 		console.log("err   ", err)
 		if (err.name === 'MoleculerError') throw err;

@@ -20,7 +20,7 @@ module.exports = async function (ctx) {
 
 		lock = await this.broker.cacher.lock(
 			`id_${wallet.id}`,
-			5000
+			20*1000
 		)
 
 		let changeType

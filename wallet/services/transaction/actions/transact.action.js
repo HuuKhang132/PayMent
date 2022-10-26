@@ -1,23 +1,22 @@
 const _ = require('lodash');
 const { MoleculerError } = require('moleculer').Errors;
 const changeBalanceConstant = require('../constants/changeBalanceConstant')
-const transactionConstant = require('../constants/transactionConstant')
+const transactionConstant = require('../../transactionModel/constants/transactionConstant')
 const otpConstant = require('../../otpModel/constants/otpConstant')
 const orderConstant = require('../constants/orderConstant')
 
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
+        const user = ctx.meta.auth.credentials
         let otp
-        if ( payload.isAuth !== "TRUE") {
-            otp = await this.broker.call('v1.OtpModel.findOne', [{ userId: payload.userId, otp: payload.otp, transactionId: payload.transactionId, status: otpConstant.STATUS.ACTIVE }])
-            if ( !otp ) {
-                return {
-                    code: 1001,
-                    message: 'Thất bại',
-                };
-            }
-        }   
+        otp = await this.broker.call('v1.OtpModel.findOne', [{ userId: user.id, otp: payload.otp, transactionId: payload.transactionId, status: otpConstant.STATUS.ACTIVE }])
+        if ( !otp ) {
+            return {
+                code: 1001,
+                message: 'Thất bại OTP',
+            };
+        }
 
         let transaction =  await this.broker.call('v1.TransactionModel.findOne', [
             { id: payload.transactionId, status: transactionConstant.STATUS.PENDING },
@@ -25,77 +24,119 @@ module.exports = async function (ctx) {
         if (_.get(transaction, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: 'Thất bại TRANSACTION',
 			};
 		}
 
-        const desUserWalletBalance = await this.broker.call('v1.Wallet.changeWalletBalance', { 
-            body: {
-                walletId: transaction.walletId,
-                amount: transaction.total,
-                type: changeBalanceConstant.CHANGE.DES,
-                transactionId: transaction.id
-            } 
-        }, { timeout: 20*1000 })
-        if ( desUserWalletBalance.code === 1001 ) {
-            transaction = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
-                { id: transaction.id },
-                { status: transactionConstant.STATUS.FAILED },
-                { new: true }
-            ]);
-            if (!transaction) {
+        let updatedTransaction
+
+        if ( transaction.type === transactionConstant.TYPE.WITHDRAW ) {
+            //GỌI API CHUYỂN TIỀN CHO NGÂN HÀNG
+
+            //GIẢ SỬ NGÂN HÀNG GỌI IPN RESPONSE
+            const bankResponse = await this.broker.call('v1.Transaction.bankApiExample')
+
+            if (bankResponse.data.status === "SUCCEED") {
+                updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
+                    body: {
+                        transactionId: transaction.id,
+                        status: transactionConstant.STATUS.SUCCEED,
+                        supplierTransactionId: bankResponse.data.supplierTransactionId
+                    }
+                });
+                if ( updatedTransaction.code == 1001 ) {
+                    return {
+                        code: 1001,
+                        message: 'Cập nhật Giao dịch thất bại! [SUCCEED]',
+                    };
+                }
+
+                const desUserWalletBalance = await this.broker.call('v1.Wallet.changeWalletBalance', { 
+                    body: {
+                        walletId: transaction.walletId,
+                        amount: transaction.total,
+                        type: changeBalanceConstant.CHANGE.DES,
+                        transactionId: transaction.id
+                    } 
+                }, { timeout: 20*1000 })
+                if ( desUserWalletBalance.code === 1001 ) {
+                    return {
+                        code: 1001,
+                        message: 'Cập nhật số dư ví thất bại!',
+                    };
+                }       
+            }
+
+            if (bankResponse.data.status === "FAILED") {
+                updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
+                    body: {
+                        transactionId: transaction.id,
+                        status: transactionConstant.STATUS.FAILED,
+                    }
+                });
+                if ( updatedTransaction.code == 1001 ) {
+                    return {
+                        code: 1001,
+                        message: 'Cập nhật Giao dịch thất bại! [FAILED]',
+                    };
+                }
+            }       
+        }
+
+        if ( transaction.type === transactionConstant.TYPE.TRANSFER ) {
+            updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
+                body: {
+                    transactionId: transaction.id,
+                    status: transactionConstant.STATUS.SUCCEED,
+                }
+            });
+            if ( updatedTransaction.code == 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Thất bại! Cập nhật giao dịch [FAILD] không thành công!',
+                    message: 'Cập nhật Giao dịch thất bại! [SUCCEED]',
+                };
+            }
+
+            const desUserWalletBalance = await this.broker.call('v1.Wallet.changeWalletBalance', { 
+                body: {
+                    walletId: transaction.walletId,
+                    amount: transaction.total,
+                    type: changeBalanceConstant.CHANGE.DES,
+                    transactionId: transaction.id
+                } 
+            }, { timeout: 20*1000 })
+            if ( desUserWalletBalance.code === 1001 ) {
+                return {
+                    code: 1001,
+                    message: 'Cập nhật số dư ví thất bại!',
+                };
+            }
+
+            const incProviderWalletBalance = await this.broker.call('v1.Wallet.changeWalletBalance', { 
+                body: {
+                    walletId: transaction.destWalletId,
+                    amount: transaction.total,
+                    type: changeBalanceConstant.CHANGE.INC,
+                    transactionId: transaction.id
+                } 
+            }, { timeout: 20*1000 })
+            if ( incProviderWalletBalance.code === 1001 ) {
+                return {
+                    code: 1001,
+                    message: 'Cập nhật số dư ví thất bại!',
                 };
             }
         }
 
-        const incProviderWalletBalance = await this.broker.call('v1.Wallet.changeWalletBalance', { 
-            body: {
-                walletId: transaction.destWalletId,
-                amount: transaction.total,
-                type: changeBalanceConstant.CHANGE.INC,
-                transactionId: transaction.id
-            } 
-        }, { timeout: 20*1000 })
-        if ( incProviderWalletBalance.code = 1001 ) {
-            transaction = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
-                { id: transaction.id },
-                { status: transactionConstant.STATUS.FAILED },
-                { new: true }
-            ]);
-            if (!transaction) {
-                return {
-                    code: 1001,
-                    message: 'Thất bại! Cập nhật giao dịch [FAILD] không thành công!',
-                };
-            }
-        }
-
-        transaction = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
-            { id: transaction.id },
-            { status: transactionConstant.STATUS.SUCCEED },
-            { new: true }
-        ]);
-        if (!transaction) {
+        const updatedOtp = await this.broker.call('v1.OtpModel.findOneAndUpdate', [
+            { otp: otp.otp, userId: user.id, status: otpConstant.STATUS.ACTIVE }, 
+            { status: otpConstant.STATUS.DEACTIVE }
+        ])
+        if ( !updatedOtp ) {
             return {
                 code: 1001,
-                message: 'Thất bại! Cập nhật giao dịch [SUCCEED] không thành công!',
+                message: 'Thất bại update OTP',
             };
-        }
-
-        if ( payload.isAuth !== "TRUE") {
-            const updatedOtp = await this.broker.call('v1.OtpModel.findOneAndUpdate', [
-                { otp: otp.otp, userId: payload.userId }, 
-                { status: otpConstant.STATUS.DEACTIVE }
-            ])
-            if ( !updatedOtp ) {
-                return {
-                    code: 1001,
-                    message: 'Thất bại',
-                };
-            }
         }
 
         if ( transaction.orderId !== null) {
@@ -114,7 +155,9 @@ module.exports = async function (ctx) {
 		return {
 			code: 1000,
 			message: 'Thành công',
-            item: transaction,
+            data: {
+                transaction: updatedTransaction,
+            }
 		};
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;

@@ -30,16 +30,6 @@ module.exports = {
 		 * Actions
 		 */
 	actions: {
-		Default: {
-			registry: {
-				auth: {
-					name: "Default",
-					jwtKey: process.env.USER_JWT_SECRETKEY
-				}
-			},
-			handler: require("./actions/default.action")
-		},
-
 		create: {
 			params: {
 				body: {
@@ -58,7 +48,7 @@ module.exports = {
 			handler: require('./actions/create.action'),
 		},
 
-		transactApi: {
+		transact: {
 			rest: {
 				method: 'POST',
 				fullPath: '/v1/Transaction/Transact',
@@ -74,13 +64,13 @@ module.exports = {
                     transactionId: 'number',
 				},
 			},
-			handler: require('./actions/transactApi.action'),
+			handler: require('./actions/transact.action'),
 		},
 
-		walletToBankApi: {
+		topup: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/Transaction/WalletToBank',
+				fullPath: '/v1/Transaction/Topup',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -89,29 +79,52 @@ module.exports = {
 			params: {
 				body: {
 					$$type: 'object',
-                    transactionId: 'number',
-					otp: 'number'
-				},
-			},
-			handler: require('./actions/walletToBankApi.action'),
-		},
-
-		topup: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/Transaction/Topup',
-				auth: false
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					transactionId: 'number',
-					supplierTransactionId: 'string',
-					status: 'string'
+					amount: 'number',
+					supplier: 'string',
 				},
 			},
 			handler: require('./actions/topup.action'),
 		}, 
+
+		withdraw: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/Transaction/Withdraw',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					amount: 'number',
+					supplier: 'string'
+				},
+			},
+			timeout: 90*1000,
+			handler: require('./actions/withdraw.action'),
+		}, 
+
+		transfer: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/Transaction/Transfer',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					destWalletId: 'number',
+					amount: 'number',
+				},
+			},
+			timeout: 90*1000,
+			handler: require('./actions/transfer.action'),
+		},
 
 		bankApiExample: {
 			params: {
@@ -120,38 +133,23 @@ module.exports = {
 			handler: require('./actions/bankApiExample.action'),
 		}, 
 
-		transact: {
-			params: {
-				body: {
-					$$type: 'object',
-					userId: 'number',
-					otp: 'number|optional',
-                    transactionId: 'number',
-					isAuth: 'string|optional'
-				},
-			},
-			handler: require('./actions/transact.action'),
-		},
-
-		walletToBank: {
-			params: {
-				body: {
-					$$type: 'object',
-					userId: 'number',
-                    transactionId: 'number',
-					otp: 'number|optional',
-					isAuth: 'string|optional'
-				},
-			},
-			handler: require('./actions/walletToBank.action'),
-		},
-
 		updateTransaction: {
+			queue: {
+				amqp: {
+					fetch: 1
+				},
+				retry: {
+					max_retry: 3,
+					delay: (retry_count) => {	
+						return retry_count * 5000;
+				  	},
+				},
+			},
 			params: {
 				body: {
 					$$type: 'object',
 					status: 'string',
-                    supplierTransactionId: 'string',
+                    supplierTransactionId: 'string | optional',
 				},
 			},
 			handler: require('./actions/updateTransaction.action'),

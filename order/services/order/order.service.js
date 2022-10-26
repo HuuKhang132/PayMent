@@ -30,16 +30,6 @@ module.exports = {
 		 * Actions
 		 */
 	actions: {
-		Default: {
-			registry: {
-				auth: {
-					name: "Default",
-					jwtKey: process.env.USER_JWT_SECRETKEY
-				}
-			},
-			handler: require("./actions/default.action")
-		},
-
 		create: {
 			rest: {
 				method: 'POST',

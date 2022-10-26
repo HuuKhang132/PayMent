@@ -40,6 +40,12 @@ const Schema = mongoose.Schema({
 		type: String,
 		require: true,
 	},
+	 
+	walletId: {
+		type: Number,
+		require: true,
+		default: null
+	}
 }, {
 	collection: 'account',
 	versionKey: false,

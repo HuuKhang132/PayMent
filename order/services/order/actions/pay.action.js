@@ -28,7 +28,7 @@ module.exports = async function (ctx) {
 			return {
 				code: 1001,
 				message: 'Số tiền trong tài khoản không đủ!',
-				item: order,
+				data: order,
 			};
 		}
 
@@ -51,7 +51,22 @@ module.exports = async function (ctx) {
             }
         }, { timeout: 30*1000 })
 
-		return transactionCreate
+		//return transactionCreate
+		if (transactionCreate.code === 1001){
+			return {
+				code: 1001,
+				message: 'Thất bại',
+			}
+		}
+
+		return {
+			code: 1000,
+			message: 'Thành công',
+            data: {
+                transaction: transactionCreate.data.transaction,
+                otp: transactionCreate.data.otp,
+            }
+		};
 
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;

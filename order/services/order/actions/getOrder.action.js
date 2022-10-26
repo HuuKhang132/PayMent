@@ -17,7 +17,7 @@ module.exports = async function (ctx) {
 		return {
 			code: 1000,
 			message: 'Thành công',
-            item: order
+            data: order
 		};
 
 	} catch (err) {

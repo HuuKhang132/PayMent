@@ -25,54 +25,18 @@ module.exports = async function (ctx) {
 			};
 		}
 
-
-		if ( transactionCreate.type === transactionConstant.TYPE.TOPUP ) {
-			transactionCreate = await this.broker.call('v1.TransactionModel.findOneAndUpdate', [
-				{ id: transactionCreate.id },
-				{ status: transactionConstant.STATUS.SUCCEED },
-				{ new: true }
-			]);
+		//giao dịch TOPUP và NAPAS thì không cần xác thực OTP -> Chỉ trả về Transaction mới được tạo
+		if ( transactionCreate.type === transactionConstant.TYPE.NAPAS || transactionCreate.type === transactionConstant.TYPE.TOPUP ) {
 			return {
 				code: 1000,
 				message: 'Thành công',
-				item: transactionCreate,
+				data: {
+					transaction: transactionCreate
+				}
 			};
 		}
 
-		if ( transactionCreate.type === transactionConstant.TYPE.NAPAS ) {
-			return {
-				code: 1000,
-				message: 'Thành công',
-				item: transactionCreate,
-			};
-		}
-
-		if ( payload.isAuth === "TRUE" ) {
-			let transaction
-			if ( transactionCreate.type === transactionConstant.TYPE.TRANSFER ) {
-				transaction = await this.broker.call('v1.Transaction.transact', {
-					body: {
-						userId: payload.userId,
-						transactionId: transactionCreate.id,
-						isAuth: payload.isAuth
-					}
-				})
-				return transaction
-			}
-
-			if ( transactionCreate.type === transactionConstant.TYPE.WALLETOBANK ) {
-				transaction = await this.broker.call('v1.Transaction.walletToBank', {
-					body: {
-						userId: payload.userId,
-						transactionId: transactionCreate.id,
-						isAuth: payload.isAuth
-					}
-				})
-				return transaction
-			}
-		}
-
-        const otp = await this.broker.call('v1.OtpModel.create', [
+		const otp = await this.broker.call('v1.OtpModel.create', [
             {
                 userId: payload.userId,
                 otp: otpGenerator.generate(6, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false }),
@@ -89,11 +53,12 @@ module.exports = async function (ctx) {
 		return {
 			code: 1000,
 			message: 'Thành công',
-            item: {
+            data: {
                 transaction: transactionCreate,
                 otp: otp.otp,
             }
 		};
+		
 	} catch (err) {
 		console.log("err   ", err)
 		if (err.name === 'MoleculerError') throw err;

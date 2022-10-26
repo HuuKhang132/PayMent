@@ -16,7 +16,7 @@ module.exports = async function (ctx) {
 		return {
 			code: 1000,
 			message: 'Thành công',
-			items: {
+			data: {
 				balance: walletInfo.balance
 			}
 		};

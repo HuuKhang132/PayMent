@@ -29,16 +29,6 @@ module.exports = {
 		 * Actions
 		 */
 	actions: {
-		Default: {
-			registry: {
-				auth: {
-					name: "Default",
-					jwtKey: process.env.USER_JWT_SECRETKEY
-				}
-			},
-			handler: require("./actions/default.action")
-		},
-
 		create: {
 			params: {
 				walletCreateInfo: {
@@ -48,18 +38,6 @@ module.exports = {
 				},
 			},
 			handler: require('./actions/create.rest.action'),
-		},
-
-		getUserInfo: {
-			rest: {
-				method: 'GET',
-				fullPath: '/v1/Wallet/GetUserInfo/:userId',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			handler: require('./actions/getUserInfo.rest.action'),
 		},
 
 		getWalletBalance: {
@@ -105,170 +83,6 @@ module.exports = {
 			timeout: 30*1000,
 			handler: require('./actions/changeBalance.action'),
 		}, 
-
-		transferApi: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/Wallet/Transfer',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					destUserId: 'number',
-					amount: 'number',
-				},
-			},
-			timeout: 90*1000,
-			handler: require('./actions/transferApi.action'),
-		},
-
-		topupApi: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/Wallet/Topup',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					amount: 'number',
-					supplier: 'string',
-				},
-			},
-			timeout: 90*1000,
-			handler: require('./actions/topupApi.action'),
-		}, 
-
-		withdraw: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/Wallet/Withdraw',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					amount: 'number',
-					supplier: 'string'
-				},
-			},
-			timeout: 90*1000,
-			handler: require('./actions/withdraw.action'),
-		}, 
-
-		walletToBankApi: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/Wallet/WalletToBank',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					amount: 'number',
-					supplier: 'string',
-				},
-			},
-			timeout: 90*1000,
-			handler: require('./actions/walletToBankApi.action'),
-		}, 
-
-		bankToWallet: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/Wallet/BankToWallet',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					amount: 'number',
-					supplier: 'string',
-					destUserId: 'number',
-				},
-			},
-			timeout: 90*1000,
-			handler: require('./actions/bankToWallet.action'),
-		}, 
-
-		bankToBank: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/Wallet/BankToBank',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					amount: 'number',
-					supplier: 'string',
-					destSupplier: 'string',
-				},
-			},
-			timeout: 90*1000,
-			handler: require('./actions/bankToBank.action'),
-		},
-
-		topup: {
-			params: {
-				body: {
-					$$type: 'object',
-					userId: 'number',
-					amount: 'number',
-					supplier: 'string',
-				},
-			},
-			timeout: 60*1000,
-			handler: require('./actions/topup.action'),
-		}, 
-
-		transfer: {
-			params: {
-				body: {
-					$$type: 'object',
-					userId: 'number',
-					destUserId: 'number',
-					amount: 'number',
-					isAuth: 'string|optional'
-				},
-			},
-			timeout: 60*1000,
-			handler: require('./actions/transfer.action'),
-		},
-
-		walletToBank: {
-			params: {
-				body: {
-					$$type: 'object',
-					userId: 'number',
-					amount: 'number',
-					supplier: 'string',
-					isAuth: 'string|optional'
-				},
-			},
-			timeout: 60*1000,
-			handler: require('./actions/walletToBank.action'),
-		}, 
-		
 	},
 
 	/**

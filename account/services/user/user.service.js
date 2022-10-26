@@ -151,7 +151,19 @@ module.exports = {
 				},
 			},
 			handler: require('./actions/resetPassword.action'),
-		}
+		},
+
+		getUserInfo: {
+			rest: {
+				method: 'GET',
+				fullPath: '/v1/User/GetUserInfo/:id',
+				auth: {
+					strategies: ['Default'],
+					mode: 'required', // 'required', 'optional', 'try'
+				},
+			},
+			handler: require('./actions/getUserInfo.rest.action'),
+		},
 	},
 
 	/**

@@ -52,7 +52,7 @@ module.exports = async function (ctx) {
 		return {
 			code: 1000,
 			message: `Thành công!`,
-            item: updatedUser
+            data: updatedUser
 		};
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;

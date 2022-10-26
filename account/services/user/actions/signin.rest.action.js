@@ -26,6 +26,42 @@ module.exports = async function (ctx) {
 			};
         }
 
+        if ( userInfo.walletId === null) {
+            let userWalletId
+            const userWallet = await this.broker.call('v1.Wallet.getWallet', {userId: userInfo.id}) 
+            if ( _.get(userWallet, 'id', null) !== null ) {
+                userWalletId = userWallet.id
+            } else {
+                const walletCreateInfo = {
+                    userId: userInfo.id,
+                    fullname: userInfo.fullname,
+                }
+                const walletCreate = await this.broker.call('v1.Wallet.create', {walletCreateInfo})
+                if ( walletCreate.code === 1001 ) { //tạo ví thất bại
+                    return {
+                        code: 1001,
+                        message: 'Đăng nhập thất bại! Vui lòng thử lại',
+                    };
+                }
+                userWalletId = walletCreate.data.id
+            }
+
+            let updatedAccount = await this.broker.call('v1.AccountModel.findOneAndUpdate', [
+                { id: userInfo.id },
+                {
+                    $set: { walletId: userWalletId },
+                },
+                { new: true }
+            ])
+            if ( _.get(updatedAccount, 'id', null) === null ) { //tạo ví thất bại
+                return {
+                    code: 1001,
+                    message: 'Đăng nhập thất bại! Vui lòng thử lại',
+                };
+            }
+        }
+        
+
         const jwtid = uuid.v4();
         const accessToken = JsonWebToken.sign(
             {
@@ -59,7 +95,7 @@ module.exports = async function (ctx) {
 		return {
 			code: 1000,
 			message: 'Thành công',
-            items: {
+            data: {
                 accessToken: accessToken,
             }
 		};
