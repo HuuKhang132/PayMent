@@ -24,13 +24,7 @@ module.exports = async function (ctx) {
 		throw new MoleculerError(`[Order] Check Expired: ${err.message}`);
 	} finally {
 		if (_.isFunction(lock)) {
-            // try {
-                console.log("lock  ", lock)
-                lock();
-            // } catch (errr) {
-            //     console.log("error  ", errr)
-            // }
-            
+            lock();
 		}
 	}
 };

@@ -13,7 +13,8 @@ module.exports = async function (ctx) {
 				message: 'Thất bại',
 			};
 		}
-        
+
+        let updatedTransaction
         if (payload.status === transactionConstant.STATUS.SUCCEED) {
             updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
                 body: {
@@ -42,7 +43,12 @@ module.exports = async function (ctx) {
                     code: 1001,
                     message: 'Cập nhật số dư ví thất bại!',
                 };
-            }       
+            }   
+            
+            return {
+                code: 1000,
+                message: 'Giao dịch thành công!'
+            }
         }
 
         if (payload.status === transactionConstant.STATUS.FAILED) {
@@ -59,7 +65,14 @@ module.exports = async function (ctx) {
                     message: 'Cập nhật Giao dịch thất bại! [FAILED]',
                 };
             }
+
+            return {
+                code: 1000,
+                message: 'Giao dịch thất bại!'
+            }
         }
+
+        
 
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;

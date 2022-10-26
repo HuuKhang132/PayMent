@@ -64,6 +64,6 @@ module.exports = async function (ctx) {
 
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;
-		throw new MoleculerError(`[Order] Pay: ${err.message}`);
+		throw new MoleculerError(`[Order] Napas: ${err.message}`);
 	}
 };
