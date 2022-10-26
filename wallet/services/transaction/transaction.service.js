@@ -126,6 +126,24 @@ module.exports = {
 			handler: require('./actions/transfer.action'),
 		},
 
+		ipnWithdraw: {
+			rest: {
+				method: 'POST',
+				fullPath: '/v1/Transaction/IpnWithdraw',
+				auth: false,
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					transactionId: 'number',
+					status: 'string',
+					supplierTransactionId: 'string'
+				},
+			},
+			timeout: 90*1000,
+			handler: require('./actions/ipnWithdraw.action'),
+		},
+
 		bankApiExample: {
 			params: {
 	

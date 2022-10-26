@@ -34,53 +34,11 @@ module.exports = async function (ctx) {
             //GỌI API CHUYỂN TIỀN CHO NGÂN HÀNG
 
             //GIẢ SỬ NGÂN HÀNG GỌI IPN RESPONSE
-            const bankResponse = await this.broker.call('v1.Transaction.bankApiExample')
-
-            if (bankResponse.data.status === "SUCCEED") {
-                updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
-                    body: {
-                        transactionId: transaction.id,
-                        status: transactionConstant.STATUS.SUCCEED,
-                        supplierTransactionId: bankResponse.data.supplierTransactionId
-                    }
-                });
-                if ( updatedTransaction.code == 1001 ) {
-                    return {
-                        code: 1001,
-                        message: 'Cập nhật Giao dịch thất bại! [SUCCEED]',
-                    };
-                }
-
-                const desUserWalletBalance = await this.broker.call('v1.Wallet.changeWalletBalance', { 
-                    body: {
-                        walletId: transaction.walletId,
-                        amount: transaction.total,
-                        type: changeBalanceConstant.CHANGE.DES,
-                        transactionId: transaction.id
-                    } 
-                }, { timeout: 20*1000 })
-                if ( desUserWalletBalance.code === 1001 ) {
-                    return {
-                        code: 1001,
-                        message: 'Cập nhật số dư ví thất bại!',
-                    };
-                }       
+            return {
+                code: 1000,
+                message: "Thành công!",         
             }
-
-            if (bankResponse.data.status === "FAILED") {
-                updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
-                    body: {
-                        transactionId: transaction.id,
-                        status: transactionConstant.STATUS.FAILED,
-                    }
-                });
-                if ( updatedTransaction.code == 1001 ) {
-                    return {
-                        code: 1001,
-                        message: 'Cập nhật Giao dịch thất bại! [FAILED]',
-                    };
-                }
-            }       
+                   
         }
 
         if ( transaction.type === transactionConstant.TYPE.TRANSFER ) {

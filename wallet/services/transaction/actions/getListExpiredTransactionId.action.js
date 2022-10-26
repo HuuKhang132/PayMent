@@ -6,7 +6,7 @@ module.exports = async function (ctx) {
 	try {
         const date = Date.now()
         const expiredTransaction = await this.broker.call('v1.TransactionModel.findMany', [
-            { createdAt: { $lt: new Date(date-60*1000) }, status: transactionConstant.STATUS.PENDING },
+            { createdAt: { $lt: new Date(date-60*60*1000) }, status: transactionConstant.STATUS.PENDING },
             null,
             { limit: 20 }
         ], { timeout: 30*1000 })
