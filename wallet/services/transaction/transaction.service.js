@@ -148,6 +148,7 @@ module.exports = {
 			params: {
 				body: {
 					$$type: 'object',
+					transactionId: 'number',
 					status: 'string',
                     supplierTransactionId: 'string | optional',
 				},

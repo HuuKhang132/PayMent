@@ -135,19 +135,21 @@ module.exports = async function (ctx) {
         if ( !updatedOtp ) {
             return {
                 code: 1001,
-                message: 'Thất bại update OTP',
+                message: 'Thất bại update OTP!',
             };
         }
 
         if ( transaction.orderId !== null) {
-            const updatedOrder =  await this.broker.call('v1.OrderModel.findOneAndUpdate', [
-                { id: transaction.orderId, paymentStatus: orderConstant.PAYMENTSTATUS.UNPAID }, 
-                { status: orderConstant.PAYMENTSTATUS.PAID }
-            ])
-            if (_.get(updatedOrder, 'id', null) === null) {
+            const updatedOrder =  await this.broker.call('v1.Order.updateOrder', {
+                body: {
+                    orderId: transaction.orderId,
+                    paymentStatus: orderConstant.PAYMENTSTATUS.PAID,
+                }
+            })
+            if ( updatedOrder.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Thất bại',
+                    message: 'Cập nhật Đơn hàng thất bại!',
                 };
             }
         }
@@ -156,7 +158,7 @@ module.exports = async function (ctx) {
 			code: 1000,
 			message: 'Thành công',
             data: {
-                transaction: updatedTransaction,
+                transaction: updatedTransaction.data.transaction,
             }
 		};
 	} catch (err) {

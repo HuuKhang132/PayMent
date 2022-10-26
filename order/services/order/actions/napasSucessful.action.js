@@ -23,12 +23,13 @@ module.exports = async function (ctx) {
                 };
             }
 
-            const paidOrder = await this.broker.call('v1.OrderModel.findOneAndUpdate', [
-                { id: payload.orderId, paymentStatus: orderConstant.PAYMENTSTATUS.UNPAID }, 
-                { paymentStatus: orderConstant.PAYMENTSTATUS.PAID },
-                { new: true }
-            ])
-            if (_.get(paidOrder, 'id', null) === null) {
+            const updatedOrder =  await this.broker.call('v1.Order.updateOrder', {
+                body: {
+                    orderId: transaction.orderId,
+                    paymentStatus: orderConstant.PAYMENTSTATUS.PAID,
+                }
+            })
+            if ( updatedOrder.code === 1001 ) {
                 return {
                     code: 1001,
                     message: 'Cập nhật Đơn hàng thất bại!',
@@ -42,6 +43,19 @@ module.exports = async function (ctx) {
         }
 
         if (payload.status === napasConstant.STATUS.FAILED ){
+            const updatedOrder =  await this.broker.call('v1.Order.updateOrder', {
+                body: {
+                    orderId: transaction.orderId,
+                    paymentStatus: orderConstant.PAYMENTSTATUS.UNPAID,
+                }
+            })
+            if ( updatedOrder.code === 1001 ) {
+                return {
+                    code: 1001,
+                    message: 'Cập nhật Đơn hàng thất bại!',
+                };
+            }
+
             return {
                 code: 1000,
                 message: 'Thanh toán thất bại!',

@@ -34,11 +34,13 @@ module.exports = async function (ctx) {
         return {
             code: 1000,
             message: 'Thành công',
-            data: updatedTransaction
+            data: {
+                transaction: updatedTransaction
+            }
         };
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;
-		throw new MoleculerError(`[Transaction] TransactApi: ${err.message}`);
+		throw new MoleculerError(`[Transaction] Update Transaction: ${err.message}`);
 	} finally {
 		if (_.isFunction(lock)) {
 			lock()

@@ -71,6 +71,28 @@ module.exports = {
 			handler: require('./actions/pay.action'),
 		},
 
+		updateOrder: {
+			queue: {
+				amqp: {
+					fetch: 1
+				},
+				retry: {
+					max_retry: 3,
+					delay: (retry_count) => {	
+						return retry_count * 5000;
+				  	},
+				},
+			},
+			params: {
+				body: {
+					$$type: 'object',
+					orderId: 'string',
+                    paymentStatus: 'string',
+				},
+			},
+			handler: require('./actions/updateOrder.action'),
+		},
+
 		getAllOrder: {
 			rest: {
 				method: 'GET',

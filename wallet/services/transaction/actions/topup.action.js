@@ -82,7 +82,7 @@ module.exports = async function (ctx) {
                     supplierTransactionId: bankResponse.data.supplierTransactionId
                 }
             })
-            if ( _.get(updatedTransaction, 'id', null) === null ) {
+            if ( updatedTransaction.code === 1001 ) {
                 return {
                     code: 1001,
                     message: 'Cập nhật Giao dịch thất bại!',
@@ -94,7 +94,7 @@ module.exports = async function (ctx) {
             code: 1000,
             message: 'Thành công',
             data: {
-                transaction: updatedTransaction,
+                transaction: updatedTransaction.data.transaction,
             }
         };
         
