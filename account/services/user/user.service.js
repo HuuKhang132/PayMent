@@ -1,11 +1,21 @@
 const _ = require('lodash');
 const mongoose = require('mongoose')
 const Mail = require('moleculer-mail')
+const i18n = require('moleculer-i18n-js')
+const path = require('path');
 
 module.exports = {
 	name: 'User',
 
+	mixins: [i18n],
+
 	version: 1,
+
+	i18n: {
+		directory: path.join(__dirname, 'locales'),
+		locales: ['vi', 'en'],
+		defaultLocale: 'vi'
+	},
 
 	/**
 	 * Settings

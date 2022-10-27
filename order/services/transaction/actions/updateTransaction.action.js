@@ -28,12 +28,12 @@ module.exports = async function (ctx) {
         if (_.get(updatedTransaction, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
         return {
             code: 1000,
-            message: 'Thành công',
+            message: this.__('succeed'),
             data: {
                 transaction: updatedTransaction
             }

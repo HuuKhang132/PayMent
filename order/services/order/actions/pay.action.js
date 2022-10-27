@@ -12,7 +12,7 @@ module.exports = async function (ctx) {
 		if (_.get(order, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
 		
@@ -20,7 +20,7 @@ module.exports = async function (ctx) {
 		if (_.get(userWallet, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
 
@@ -36,7 +36,7 @@ module.exports = async function (ctx) {
 		if (_.get(providerWallet, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
 
@@ -55,13 +55,13 @@ module.exports = async function (ctx) {
 		if (transactionCreate.code === 1001){
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			}
 		}
 
 		return {
 			code: 1000,
-			message: 'Thành công',
+			message: this.__('succeed'),
             data: {
                 transaction: transactionCreate.data.transaction,
                 otp: transactionCreate.data.otp,

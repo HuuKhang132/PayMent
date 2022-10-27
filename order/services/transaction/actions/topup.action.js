@@ -14,7 +14,7 @@ module.exports = async function (ctx) {
 		if (_.get(wallet, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
 
@@ -31,12 +31,11 @@ module.exports = async function (ctx) {
 		if ( transactionCreate.code == 1001 ) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
 
         const transaction = transactionCreate.data.transaction
-        console.log("transaction  ", transaction)
 
 		//GỌI API BÊN NGÂN HÀNG: YÊU CẦU CHUYỂN TIỀN ĐẾN VÍ
 		//SAU KHI NGÂN HÀNG XỬ LÍ SẼ TRẢ VỀ KẾT QUẢ GIAO DỊCH -> XỬ LÍ SỐ DƯ TRONG VÍ
@@ -54,7 +53,7 @@ module.exports = async function (ctx) {
             if ( updatedTransaction.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật Giao dịch thất bại!',
+                    message: this.__('updateTransactionFailed'),
                 };
             }
 
@@ -69,7 +68,7 @@ module.exports = async function (ctx) {
             if ( updatedWallet.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật số dư ví thất bại!',
+                    message: this.__('updateWalletFailed'),
                 };
             }
         }
@@ -85,14 +84,14 @@ module.exports = async function (ctx) {
             if ( updatedTransaction.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật Giao dịch thất bại!',
+                    message: this.__('updateTransactionFailed'),
                 };
             }
         }
 
         return {
             code: 1000,
-            message: 'Thành công',
+            message: this.__('failed'),
             data: {
                 transaction: updatedTransaction.data.transaction,
             }

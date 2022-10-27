@@ -12,7 +12,7 @@ module.exports = async function (ctx) {
 		if (_.get(userWallet, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			};
 		}
 
@@ -20,7 +20,7 @@ module.exports = async function (ctx) {
 		if (_.get(providerWallet, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			};
 		}
 
@@ -33,12 +33,11 @@ module.exports = async function (ctx) {
 			providerId: payload.providerId
 		};
 		const orderCreate = await this.broker.call('v1.OrderModel.create', [orderCreateInfo]);
-		console.log("orderCreate   ", orderCreate)
 
         if (_.get(orderCreate, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			};
 		}
 
@@ -55,12 +54,12 @@ module.exports = async function (ctx) {
 			if (transactionCreate.code === 1001){
 				return {
 					code: 1001,
-					message: 'Thất bại',
+					message: this.__("failed"),
 				}
 			}
 			return {
 				code: 1000,
-				message: 'Thành công',
+				message: this.__("succeed"),
 				data: {
 					url: "www.google.com",
 					transaction: transactionCreate.data.transaction,
@@ -92,7 +91,7 @@ module.exports = async function (ctx) {
 		if (transactionCreate.code === 1001){
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			}
 		}
 

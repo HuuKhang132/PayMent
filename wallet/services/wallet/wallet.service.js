@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const mongoose = require('mongoose')
+const path = require('path');
 const Queue = require('moleculer-rabbitmq')
+const i18n = require('moleculer-i18n-js')
 
 const queueMixin = Queue({
 	connection: process.env.RABBITMQ_URI,
@@ -10,9 +12,15 @@ const queueMixin = Queue({
 module.exports = {
 	name: 'Wallet',
 
-	mixins: [queueMixin],
+	mixins: [queueMixin, i18n],
 
 	version: 1,
+
+	i18n: {
+		directory: path.join(__dirname, 'locales'),
+		locales: ['vi', 'en'],
+		defaultLocale: 'vi'
+	},
 
 	/**
 	 * Settings

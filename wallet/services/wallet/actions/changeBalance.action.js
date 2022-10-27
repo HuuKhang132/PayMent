@@ -14,7 +14,7 @@ module.exports = async function (ctx) {
 		if (_.get(wallet, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
 
@@ -34,7 +34,7 @@ module.exports = async function (ctx) {
 		if (_.get(updatedWallet, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
 
@@ -49,13 +49,13 @@ module.exports = async function (ctx) {
 		if (_.get(walletHisoryCreate, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Tạo lịch sử Ví thất bại!',
+				message: this.__('createWalletHistoryFailed'),
 			};
 		}
 
         return {
             code: 1000,
-            message: 'Thành công!',
+            message: this.__('succeed'),
         };
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;

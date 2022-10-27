@@ -1,0 +1,7 @@
+{
+    "succeed": "Thành công!",
+    "failed": "Thất bại!",
+    "updateTransactionFailed": "Cập nhật Giao dịch thất bại!",
+    "updateOrderFailed": "Cập nhật Đơn hàng thất bại!",
+    "updateWalletFailed": "Cập nhật Số dư thất bại!"
+}

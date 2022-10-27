@@ -1,0 +1,6 @@
+{
+    "succeed": "Succeed!",
+    "failed": "Failed!",
+    "updateTransactionFailed": "Failed to update Transaction!",
+    "updateOrderFailed": "Failed to update Order!"
+}

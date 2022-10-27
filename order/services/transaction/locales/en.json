@@ -1,0 +1,7 @@
+{
+    "succeed": "Succeed!",
+    "failed": "Failed!",
+    "updateTransactionFailed": "Failed to update Transaction!",
+    "updateOrderFailed": "Failed to update Order!",
+    "updateWalletFailed": "Failed to change wallet balance!"
+}

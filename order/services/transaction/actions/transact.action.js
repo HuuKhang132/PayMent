@@ -7,6 +7,7 @@ const orderConstant = require('../constants/orderConstant')
 
 module.exports = async function (ctx) {
 	try {
+        this.setLocale('vi')
 		const payload = ctx.params.body;
         const user = ctx.meta.auth.credentials
         let otp
@@ -14,7 +15,7 @@ module.exports = async function (ctx) {
         if ( !otp ) {
             return {
                 code: 1001,
-                message: 'Thất bại OTP',
+                message: this.__("failed"),
             };
         }
 
@@ -24,7 +25,7 @@ module.exports = async function (ctx) {
         if (_.get(transaction, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại TRANSACTION',
+				message: this.__("failed"),
 			};
 		}
 
@@ -33,10 +34,9 @@ module.exports = async function (ctx) {
         if ( transaction.type === transactionConstant.TYPE.WITHDRAW ) {
             //GỌI API CHUYỂN TIỀN CHO NGÂN HÀNG
 
-            //GIẢ SỬ NGÂN HÀNG GỌI IPN RESPONSE
             return {
                 code: 1000,
-                message: "Thành công!",         
+                message: this.__("succeed"),         
             }
                    
         }
@@ -51,7 +51,7 @@ module.exports = async function (ctx) {
             if ( updatedTransaction.code == 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật Giao dịch thất bại! [SUCCEED]',
+                    message: this.__('updateTransactionFailed'),
                 };
             }
 
@@ -66,7 +66,7 @@ module.exports = async function (ctx) {
             if ( desUserWalletBalance.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật số dư ví thất bại!',
+                    message: this.__('updateWalletFailed'),
                 };
             }
 
@@ -81,7 +81,7 @@ module.exports = async function (ctx) {
             if ( incProviderWalletBalance.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật số dư ví thất bại!',
+                    message: this.__('updateWalletFailed'),
                 };
             }
         }
@@ -90,13 +90,7 @@ module.exports = async function (ctx) {
             { otp: otp.otp, userId: user.id, status: otpConstant.STATUS.ACTIVE }, 
             { status: otpConstant.STATUS.DEACTIVE }
         ])
-        if ( !updatedOtp ) {
-            return {
-                code: 1001,
-                message: 'Thất bại update OTP!',
-            };
-        }
-
+   
         if ( transaction.orderId !== null) {
             const updatedOrder =  await this.broker.call('v1.Order.updateOrder', {
                 body: {
@@ -107,14 +101,14 @@ module.exports = async function (ctx) {
             if ( updatedOrder.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật Đơn hàng thất bại!',
+                    message: this.__('updateOrderFailed'),
                 };
             }
         }
 
 		return {
 			code: 1000,
-			message: 'Thành công',
+			message: this.__("succeed"),
             data: {
                 transaction: updatedTransaction.data.transaction,
             }

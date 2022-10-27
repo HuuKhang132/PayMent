@@ -9,7 +9,7 @@ module.exports = async function (ctx) {
 		if ( _.get(userInfo, 'id', null) == null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
 
@@ -17,7 +17,7 @@ module.exports = async function (ctx) {
 
 		return {
 			code: 1000,
-			message: 'Thành công',
+			message: this.__('succeed'),
 			data: {
 				user: responseUserInfo
 			}

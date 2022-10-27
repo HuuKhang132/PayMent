@@ -4,6 +4,7 @@ const transactionConstant = require('../../transactionModel/constants/transactio
 
 module.exports = async function (ctx) {
 	try {
+		this.setLocale('vi')
 		const payload = ctx.params.body;
 		const user = ctx.meta.auth.credentials
 
@@ -11,14 +12,14 @@ module.exports = async function (ctx) {
 		if (_.get(userWallet, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			};
 		}
 
         if (userWallet.balance < payload.amount){
             return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			};
         }
 
@@ -26,7 +27,7 @@ module.exports = async function (ctx) {
 		if (_.get(destinationWallet, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			};
 		}
 
@@ -45,13 +46,13 @@ module.exports = async function (ctx) {
 		if (transactionCreate.code === 1001){
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			}
 		}
 		
 		return {
 			code: 1000,
-			message: 'Thành công',
+			message: this.__("succeed"),
             data: {
                 transaction: transactionCreate.data.transaction,
                 otp: transactionCreate.data.otp,
@@ -60,6 +61,6 @@ module.exports = async function (ctx) {
 
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;
-		throw new MoleculerError(`[Wallet] Transfer: ${err.message}`);
+		throw new MoleculerError(`[Transaction] Money Transfer: ${err.message}`);
 	}
 };

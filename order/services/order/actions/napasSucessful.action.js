@@ -6,7 +6,6 @@ const napasConstant = require('../constants/napasConstant')
 module.exports = async function (ctx) {
 	try {
         const payload = ctx.params.body;
-        console.log("payload  ", payload)
         
         if (payload.status === napasConstant.STATUS.SUCCEED ){
             const updatedTransaction = await this.broker.call('v1.Transaction.updateTransaction', {
@@ -19,7 +18,7 @@ module.exports = async function (ctx) {
             if ( updatedTransaction.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật Giao dịch thất bại!',
+                    message: this.__('updateTransactionFailed'),
                 };
             }
 
@@ -32,13 +31,13 @@ module.exports = async function (ctx) {
             if ( updatedOrder.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật Đơn hàng thất bại!',
+                    message: this.__('updateOrderFailed'),
                 };
             }
 
             return {
                 code: 1000,
-                message: 'Thanh toán thành công!',
+                message: this.__('succeed'),
             };
         }
 
@@ -52,13 +51,13 @@ module.exports = async function (ctx) {
             if ( updatedOrder.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật Đơn hàng thất bại!',
+                    message: this.__('updateOrderFailed'),
                 };
             }
 
             return {
                 code: 1000,
-                message: 'Thanh toán thất bại!',
+                message: this.__('failed'),
             };
         }
 

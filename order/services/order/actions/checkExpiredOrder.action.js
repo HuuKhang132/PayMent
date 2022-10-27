@@ -11,7 +11,6 @@ module.exports = async function (ctx) {
 			`id_${payload.orderId}`,
 			60*1000
 		)
-        console.log(`lock ${payload.orderId}`)
 
         const expiredOrder = await this.broker.call('v1.OrderModel.findOneAndUpdate', [
             { id: payload.orderId },

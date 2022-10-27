@@ -14,15 +14,12 @@ const oauth2Client = new OAuth2(
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.body;
-        console.log("payload  ", payload)
 		const userInfo = await this.broker.call('v1.AccountModel.findOne', [{username: payload.username, email: payload.email}]);
-
-        console.log("find Done", userInfo)
 
         if (_.get(userInfo, 'id', null) == null) {
 			return {
 				code: 1001,
-				message: 'Tài khoản không tồn tại!',
+				message: this.__('failed'),
 			};
 		}
 
@@ -64,7 +61,7 @@ module.exports = async function (ctx) {
             if (err) {
                 return {
                     code: 1001,
-                    message: `Thất bại!`,
+                    message: this.__('failed'),
                 };
             } else {
                 console.log('Email sent');

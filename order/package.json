@@ -36,12 +36,15 @@
     "moleculer-db": "^0.8.19",
     "moleculer-db-adapter-mongoose": "^0.8.14",
     "moleculer-db-adapter-mongoose-action": "^1.0.9",
+    "moleculer-i18n-js": "^1.0.3",
     "moleculer-rabbitmq": "^1.2.0",
     "moleculer-web": "^0.10.2",
     "mongoose": "^5.8.11",
     "mongoose-auto-increment": "^5.0.1",
     "nats": "^2.2.0",
-    "redlock": "^4.2.0"
+    "otp-generator": "^4.0.0",
+    "redlock": "^4.2.0",
+    "uuid": "^9.0.0"
   },
   "engines": {
     "node": ">= 12.x.x"

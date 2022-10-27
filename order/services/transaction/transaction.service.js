@@ -1,19 +1,29 @@
 const _ = require('lodash');
+const path = require('path');
 const mongoose = require('mongoose')
 const Cron = require("moleculer-cron");
-const Queue = require('moleculer-rabbitmq')
+const Queue = require('moleculer-rabbitmq');
+const i18n = require('moleculer-i18n-js')
 
 const queueMixin = Queue({
 	connection: process.env.RABBITMQ_URI,
 	asyncActions: true,
-  });
+});
+
+  
 
 module.exports = {
 	name: 'Transaction',
 	
-	mixins: [Cron, queueMixin],
+	mixins: [Cron, queueMixin, i18n],
 
 	version: 1,
+
+	i18n: {
+		directory: path.join(__dirname, 'locales'),
+		locales: ['vi', 'en'],
+		defaultLocale: 'vi'
+	},
 
 	/**
 	 * Settings

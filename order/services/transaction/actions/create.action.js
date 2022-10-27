@@ -5,6 +5,7 @@ const transactionConstant = require('../../transactionModel/constants/transactio
 
 module.exports = async function (ctx) {
 	try {
+		this.setLocale('vi');
 		const payload = ctx.params.body;
         const transactionCreateInfo = {
 			walletId: payload.walletId ? payload.walletId : null,
@@ -18,10 +19,11 @@ module.exports = async function (ctx) {
 		let transactionCreate; 
 		transactionCreate = await this.broker.call('v1.TransactionModel.create', [transactionCreateInfo]);
 
+
         if (_.get(transactionCreate, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			};
 		}
 
@@ -29,7 +31,7 @@ module.exports = async function (ctx) {
 		if ( transactionCreate.type === transactionConstant.TYPE.NAPAS || transactionCreate.type === transactionConstant.TYPE.TOPUP ) {
 			return {
 				code: 1000,
-				message: 'Thành công',
+				message: this.__("succeed"),
 				data: {
 					transaction: transactionCreate
 				}
@@ -46,13 +48,13 @@ module.exports = async function (ctx) {
 		if (_.get(otp, 'otp', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			};
 		}
 
 		return {
 			code: 1000,
-			message: 'Thành công',
+			message: this.__("succeed"),
             data: {
                 transaction: transactionCreate,
                 otp: otp.otp,
@@ -60,7 +62,6 @@ module.exports = async function (ctx) {
 		};
 		
 	} catch (err) {
-		console.log("err   ", err)
 		if (err.name === 'MoleculerError') throw err;
 		throw new MoleculerError(`[Transaction] Create: ${err.message}`);
 	}

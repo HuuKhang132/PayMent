@@ -35,6 +35,7 @@
     "moleculer-db": "^0.8.19",
     "moleculer-db-adapter-mongoose": "^0.8.14",
     "moleculer-db-adapter-mongoose-action": "^1.0.9",
+    "moleculer-i18n-js": "^1.0.3",
     "moleculer-mail": "^2.0.0",
     "moleculer-rabbitmq": "^1.2.0",
     "mongoose": "^5.8.11",

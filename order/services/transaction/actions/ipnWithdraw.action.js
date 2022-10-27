@@ -10,7 +10,7 @@ module.exports = async function (ctx) {
         if (_.get(transaction, 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__('failed'),
 			};
 		}
 
@@ -26,7 +26,7 @@ module.exports = async function (ctx) {
             if ( updatedTransaction.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật Giao dịch thất bại! [SUCCEED]',
+                    message: this.__('updateTransactionFailed'),
                 };
             }
 
@@ -41,13 +41,13 @@ module.exports = async function (ctx) {
             if ( desUserWalletBalance.code === 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật số dư ví thất bại!',
+                    message: this.__('updateWalletFailed'),
                 };
             }   
             
             return {
                 code: 1000,
-                message: 'Giao dịch thành công!'
+                message: this.__('succeed')
             }
         }
 
@@ -62,13 +62,13 @@ module.exports = async function (ctx) {
             if ( updatedTransaction.code == 1001 ) {
                 return {
                     code: 1001,
-                    message: 'Cập nhật Giao dịch thất bại! [FAILED]',
+                    message: this.__('updateTransactionFailed'),
                 };
             }
 
             return {
                 code: 1000,
-                message: 'Giao dịch thất bại!'
+                message: this.__('failed')
             }
         }
 

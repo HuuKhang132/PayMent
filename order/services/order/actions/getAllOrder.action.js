@@ -21,13 +21,13 @@ module.exports = async function (ctx) {
 		if (_.isNil(order) && _.get(order[0], 'id', null) === null) {
 			return {
 				code: 1001,
-				message: 'Thất bại',
+				message: this.__("failed"),
 			};
 		}
 
 		return {
 			code: 1000,
-			message: 'Thành công',
+			message: this.__("succeed"),
             data: {
                 listOrder: order
             },

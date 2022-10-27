@@ -10,7 +10,7 @@ module.exports = async function (ctx) {
 
         return {
             code: 1000,
-            message: 'Thành công',
+            message: this.__('succeed'),
             data: {
                 supplierTransactionId: supTransId,
                 status: "SUCCEED",
