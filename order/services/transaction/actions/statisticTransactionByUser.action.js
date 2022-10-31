@@ -11,36 +11,55 @@ module.exports = async function (ctx) {
 		let from = moment(payload.from, "DD/MM/YYYY").utc(true).toDate()
 		let to = moment(payload.to, "DD/MM/YYYY").add(1, 'days').utc(true).toDate()
 
-        
-        const lastWalletId = await this.broker.call('v1.AccountModel.aggregate', [
-            [
-                { $sort: { _id: -1 } },
-                { $limit: 1 },
-                { $project: { walletId: 1 } }
-            ]
-        ])
-        console.log("lastWalletId  ", lastWalletId[0].walletId)
 
         let finalList = []
-        
-        let fromWallet = 0
-        let toWallet = fromWallet + 100000
 
-        while ( toWallet <= lastWalletId[0].walletId + 100000 ) {
-            let getTransaction = await this.broker.call('v1.Transaction.getTransactionGroupByAccount', {
+        if ( payload.accountId ) {
+            const user = await this.broker.call('v1.AccountModel.findOne', [{ id: payload.accountId }])
+            if (_.get(user, 'id', null) == null) {
+                return {
+                    code: 1001,
+                    message: this.__("failed"),
+                };
+            }
+            let getTransaction = await this.broker.call('v1.Transaction.getTransactionByAccountId', {
                 body: {
                     fromDate: from,
 					toDate: to,
-					fromWallet: fromWallet,
-					toWallet: toWallet,
+					walletId: user.walletId
                 }
             })
-            console.log("toWallet  ", toWallet)
             finalList = finalList.concat(getTransaction.data.list)
-
-            fromWallet = toWallet
-            toWallet = fromWallet + 100000
-
+        } else {
+            const lastWalletId = await this.broker.call('v1.AccountModel.aggregate', [
+                [
+                    { $sort: { _id: -1 } },
+                    { $limit: 1 },
+                    { $project: { walletId: 1 } }
+                ]
+            ])
+            console.log("lastWalletId  ", lastWalletId[0].walletId)
+    
+            
+            let fromWallet = 0
+            let toWallet = fromWallet + 100000
+    
+            while ( toWallet <= lastWalletId[0].walletId + 100000 ) {
+                let getTransaction = await this.broker.call('v1.Transaction.getTransactionGroupByAccount', {
+                    body: {
+                        fromDate: from,
+                        toDate: to,
+                        fromWallet: fromWallet,
+                        toWallet: toWallet,
+                    }
+                })
+                console.log("toWallet  ", toWallet)
+                finalList = finalList.concat(getTransaction.data.list)
+    
+                fromWallet = toWallet
+                toWallet = fromWallet + 100000
+    
+            }
         }
        
         console.log("finalList.length  ", finalList.length)
@@ -87,8 +106,6 @@ module.exports = async function (ctx) {
                 list: finalList,
             },
 		};
-
-        return
 
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;

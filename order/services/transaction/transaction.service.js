@@ -154,10 +154,10 @@ module.exports = {
 			handler: require('./actions/ipnWithdraw.action'),
 		},
 
-		getTransactionByDate: {
+		statisticTransactionByDate: {
 			rest: {
 				method: 'GET',
-				fullPath: '/v1/Transaction/GetTransactionByDate',
+				fullPath: '/v1/Transaction/StatisticTransactionByDate',
 				auth: false,
 			},
 			params: {
@@ -169,13 +169,13 @@ module.exports = {
 				},
 			},
 			timeout: 90*1000,
-			handler: require('./actions/getTransactionByDate.action'),
+			handler: require('./actions/statisticTransactionByDate.action'),
 		},
 
-		getTransactionByUser: {
+		statisticTransactionByUser: {
 			rest: {
 				method: 'GET',
-				fullPath: '/v1/Transaction/GetTransactionByUser',
+				fullPath: '/v1/Transaction/StatisticTransactionByUser',
 				auth: false,
 			},
 			params: {
@@ -183,10 +183,11 @@ module.exports = {
 					$$type: 'object',
 					from: 'string',
 					to: 'string',
+					accountId: 'string | optional'
 				},
 			},
 			timeout: 90*1000,
-			handler: require('./actions/getTransactionByUser.action')
+			handler: require('./actions/statisticTransactionByUser.action')
 		},
 
 		getTransactionGroupByAccount: {
@@ -201,6 +202,19 @@ module.exports = {
 			},
 			timeout: 90*1000,
 			handler: require('./actions/getTransactionGroupByAccount.action'),
+		},
+
+		getTransactionByAccountId: {
+			params: {
+				body: {
+					$$type: 'object',
+					fromDate: 'date',
+					toDate: 'date',
+					walletId: 'number',
+				},
+			},
+			timeout: 90*1000,
+			handler: require('./actions/getTransactionByAccountId.action'),
 		},
 
 		bankApiExample: {
