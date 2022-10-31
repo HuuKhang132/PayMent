@@ -38,11 +38,7 @@ module.exports = async function (ctx) {
 		if ( walletCreate.code === 1001 ) { //tạo ví thất bại
 			return {
 				code: 1000,
-<<<<<<< HEAD
 				message: this.__('failed'),
-=======
-				message: this.__('succeed'),
->>>>>>> 531f55c8f750de4c5ab7528c9ce899eaf7162f7b
 			};
 		}
 
