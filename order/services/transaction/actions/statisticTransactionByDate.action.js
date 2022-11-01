@@ -129,41 +129,41 @@ module.exports = async function (ctx) {
         //     ]
 		// ])
 
-        let listTransaction = await this.broker.call('v1.TransactionModel.aggregate', [
-            [
-                { 
-                    $match: {
-                        $and: [
-                            { createAt: { $gt: from, $lt: to } },
-                            {"$expr": {"$in": ["$type", getType]}}
-                        ]
-                    },
-                },
-                { 
-                    $addFields: {
-                        date: { $dateToString: { format: "%d/%m/%Y", date: "$createAt" } },
-                        sortDate: { $dateToString: { format: "%Y-%m-%d", date: "$createAt" } }
-                    }
-                },
-                {
-                    $group: { 
-                        _id: {
-                            sortDate: "$sortDate",
-                            status: "$status"
-                        },
-                        count: { $sum: 1}
-                    },
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        date: "$_id.sortDate",
-                        status: "$status",
-                        count: "$count",
-                    }
-                }
-            ]
-		])
+        // let listTransaction = await this.broker.call('v1.TransactionModel.aggregate', [
+        //     [
+        //         { 
+        //             $match: {
+        //                 $and: [
+        //                     { createAt: { $gt: from, $lt: to } },
+        //                     {"$expr": {"$in": ["$type", getType]}}
+        //                 ]
+        //             },
+        //         },
+        //         { 
+        //             $addFields: {
+        //                 date: { $dateToString: { format: "%d/%m/%Y", date: "$createAt" } },
+        //                 sortDate: { $dateToString: { format: "%Y-%m-%d", date: "$createAt" } }
+        //             }
+        //         },
+        //         {
+        //             $group: { 
+        //                 _id: {
+        //                     sortDate: "$sortDate",
+        //                     status: "$status"
+        //                 },
+        //                 count: { $sum: 1}
+        //             },
+        //         },
+        //         {
+        //             $project: {
+        //                 _id: 0,
+        //                 date: "$_id.sortDate",
+        //                 status: "$status",
+        //                 count: "$count",
+        //             }
+        //         }
+        //     ]
+		// ])
 
         // listTransaction = listTransaction[0]
         // let finalList = []
