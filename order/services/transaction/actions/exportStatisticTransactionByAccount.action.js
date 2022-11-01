@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const { MoleculerError } = require('moleculer').Errors;
-const moment = require('moment')
 const XLSX = require('xlsx')
 const path = require('path')
+const uuid = require('uuid')
 
 module.exports = async function (ctx) {
 	try {
@@ -16,10 +16,15 @@ module.exports = async function (ctx) {
             }
         })
 
-        let finalList = getStatistic.data.list
-       
-        console.log("finalList.length  ", finalList.length)
+        if ( getStatistic.code === 1001 ){
+            return {
+                code: 1001,
+                message: this.__("failed"),
+            };
+        }
 
+        let finalList = getStatistic?.data?.list ? getStatistic.data.list : []
+       
         const workSheetColumnNames = [
             "Full Name",
             "User Id",
@@ -29,9 +34,11 @@ module.exports = async function (ctx) {
             "Total Failed Transaction",
         ]
 
+        const fileName = "Transaction_User_" + uuid.v4()
+
         const workSheetName = "Transaction_Group_User"
 
-        const filePath = "../exports/Transaction_User.xlsx";
+        const filePath = `../exports/${fileName}.xlsx`;
 
         const exportsList = ( finalList, workSheetColumnNames, workSheetName, filePath ) => {
             const data = finalList.map( item => {
