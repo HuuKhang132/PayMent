@@ -1,8 +1,6 @@
 const _ = require('lodash');
 const { MoleculerError } = require('moleculer').Errors;
 const moment = require('moment')
-const XLSX = require('xlsx')
-const path = require('path')
 
 module.exports = async function (ctx) {
 	try {
@@ -177,49 +175,17 @@ module.exports = async function (ctx) {
             }
     
             finalList = Object.values(transactionInfoList)
-
+            finalList.sort((a, b) => b.totalSucceedTransaction - a.totalSucceedTransaction)
         }
        
         console.log("finalList.length  ", finalList.length)
-
-        // const workSheetColumnNames = [
-        //     "Full Name",
-        //     "User Id",
-        //     "Email",
-        //     "Total Transaction",
-        //     "Total Succeed Transaction",
-        //     "Total Failed Transaction",
-        // ]
-
-        // const workSheetName = "Transaction_Group_User"
-
-        // const filePath = "../exports/Transaction_User.xlsx";
-
-        // const exportsList = ( finalList, workSheetColumnNames, workSheetName, filePath ) => {
-        //     const data = finalList.map( item => {
-        //         let splitItem = item.split(" - ")
-        //         return [splitItem[0], splitItem[1], splitItem[2], splitItem[3], splitItem[4], splitItem[5]]
-        //     })
-        //     const workBook = XLSX.utils.book_new()
-        //     const workSheetData = [
-        //         workSheetColumnNames,
-        //         ...data
-        //     ]
-        //     const workSheet = XLSX.utils.aoa_to_sheet(workSheetData)
-        //     XLSX.utils.book_append_sheet(workBook, workSheet, workSheetName)
-        //     XLSX.writeFile(workBook, path.resolve(filePath))
-        //     return true
-
-        // }
-
-        // exportsList(finalList, workSheetColumnNames, workSheetName, filePath)
 
         return {
 			code: 1000,
 			message: this.__("succeed"),
             data: {
-                from: from,
-                to: to,
+                from: payload.from,
+                to: payload.to,
                 totalRecords: finalList.length,
                 list: finalList,
             },
