@@ -12,7 +12,7 @@ module.exports = async function (ctx) {
         ])
 		console.log("signedOut  ", signedOut)
 
-		if ( signedOut.deletedCount === 0) {
+		if ( _.get(signedOut, 'jwtId', null) == null ) {
 			return {
 				code: 1001,
 				message: this.__('failed'),

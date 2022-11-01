@@ -6,7 +6,7 @@ const tokenConstant = require('../../adminTokenModel/constants/tokenConstant')
 module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params;
-		const authorizeToken = await this.broker.call('v1.Token.authorize', { ...payload });
+		const authorizeToken = await this.broker.call('v1.AdminToken.authorize', { ...payload });
 		if ( !authorizeToken ) {
 			throw new MoleculerError('Thông tin xác thực không hợp lệ', 401, null, null);
 		}

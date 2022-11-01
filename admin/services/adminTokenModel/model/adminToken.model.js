@@ -8,7 +8,7 @@ const Schema = mongoose.Schema({
 		require: true,
 		unique: true,
 	},
-	userId: {
+	adminId: {
 		type: Number,
 		require: true,
 	},

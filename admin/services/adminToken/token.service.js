@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const Cron = require("moleculer-cron");
 
 module.exports = {
-	name: 'Token',
+	name: 'AdminToken',
 
 	mixins: [Cron],
 
@@ -27,25 +27,9 @@ module.exports = {
 		authorize: {
 			handler: require('./actions/authorize.action'),
 		},
-
-		checkExpired: {
-			handler: require('./actions/checkExpired.action'),
-		},
-
 	},
 
 	crons: [
-        // {
-        //     name: "CheckExpired",
-        //     cronTime: '0 * * * *',
-        //     async onTick() {
-		// 		try {
-		// 			await this.call('v1.Jwt.checkExpired')
-		// 		} catch (err) {
-		// 			console.log(err);
-		// 		}
-        //     },
-        // },
     ],
 
 

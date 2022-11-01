@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const mongoose = require('mongoose')
-const Mail = require('moleculer-mail')
 const i18n = require('moleculer-i18n-js')
 const path = require('path');
 
@@ -35,7 +34,7 @@ module.exports = {
 		AdminAuth: {
 			registry: {
 				auth: {
-					name: "Default",
+					name: "AdminAuth",
 					jwtKey: process.env.USER_JWT_SECRETKEY
 				}
 			},
@@ -45,19 +44,14 @@ module.exports = {
 		register: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/User/Register',
+				fullPath: '/v1/Admin/Register',
 				auth: false,
 			},
 			params: {
 				body: {
 					$$type: 'object',
-					email: 'email',
-					phone: 'string',
 					username: 'string',
 					password: { type: "string", min: 6, max: 20 },
-					fullname: 'string',
-					gender: 'string',
-					avatar: 'string',
 				},
 			},
 			handler: require('./actions/register.rest.action'),
@@ -66,7 +60,7 @@ module.exports = {
 		signin: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/User/Signin',
+				fullPath: '/v1/Admin/Signin',
 				auth: false,
 			},
 			params: {
@@ -83,9 +77,9 @@ module.exports = {
 		signout: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/User/Signout',
+				fullPath: '/v1/Admin/Signout',
 				auth: {
-					strategies: ['Default'],
+					strategies: ['AdminAuth'],
 					mode: 'required'
 				},
 			},
@@ -93,86 +87,6 @@ module.exports = {
 
 			},
 			handler: require('./actions/signout.action'),
-		},
-
-		update: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/User/Update',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required'
-				},
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					email: 'email',
-					phone: 'string',
-					fullname: 'string',
-					gender: 'string',
-					avatar: 'string',
-				},
-			},
-			queue: {
-				amqp: {
-					fetch: 1
-				},
-				retry: {
-					max_retry: 3,
-					delay: (retry_count) => {	
-						return retry_count * 5000;
-				  	},
-				},
-			},
-			handler: require('./actions/updateUserInfo.action'),
-		},
-
-		forgotPassword: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/User/ForgotPassword',
-				auth: false,
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					username: 'string',
-					email: 'email',
-				},
-			},
-			handler: require('./actions/forgotPassword.action'),
-		},
-
-		resetPassword: {
-			rest: {
-				method: 'POST',
-				fullPath: '/v1/User/ResetPassword',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			params: {
-				body: {
-					$$type: 'object',
-					newPassword: { type: "string", min: 6, max: 20 },
-					reNewPassword: { type: "string", min: 6, max: 20 },
-				},
-			},
-			handler: require('./actions/resetPassword.action'),
-		},
-
-		getUserInfo: {
-			rest: {
-				method: 'GET',
-				fullPath: '/v1/User/GetUserInfo/:id',
-				auth: {
-					strategies: ['Default'],
-					mode: 'required', // 'required', 'optional', 'try'
-				},
-			},
-			handler: require('./actions/getUserInfo.rest.action'),
 		},
 	},
 

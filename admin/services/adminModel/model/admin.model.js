@@ -7,17 +7,6 @@ require('mongoose-type-email');
 autoIncrement.initialize(mongoose);
 
 const Schema = mongoose.Schema({
-	email: {
-		type: mongoose.SchemaTypes.Email,
-		require: true,
-		unique: true,
-	},
-	phone: {
-		type: String,
-		require: true,
-        unique: true,
-		default: null,
-	},
 	username: {
 		type: String,
 		require: true,
@@ -27,27 +16,8 @@ const Schema = mongoose.Schema({
 		type: String,
 		require: true,
 	},
-	fullname: {
-		type: String,
-		default: null,
-	},
-	gender: {
-		type: String,
-		enum: _.values(accountConstant.GENDER),
-	},
-
-	avatar: {
-		type: String,
-		require: true,
-	},
-	 
-	walletId: {
-		type: Number,
-		require: true,
-		default: null
-	}
 }, {
-	collection: 'account',
+	collection: 'admin',
 	versionKey: false,
 	timestamps: true,
 });

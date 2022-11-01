@@ -58,10 +58,10 @@ module.exports = {
 			handler: require('./actions/create.action'),
 		},
 
-		transact: {
+		verifyTransaction: {
 			rest: {
 				method: 'POST',
-				fullPath: '/v1/Transaction/Transact',
+				fullPath: '/v1/Transaction/VerifyTransaction',
 				auth: {
 					strategies: ['Default'],
 					mode: 'required', // 'required', 'optional', 'try'
@@ -74,7 +74,7 @@ module.exports = {
                     transactionId: 'number',
 				},
 			},
-			handler: require('./actions/transact.action'),
+			handler: require('./actions/verifyTransaction.action'),
 		},
 
 		topup: {
@@ -158,7 +158,10 @@ module.exports = {
 			rest: {
 				method: 'GET',
 				fullPath: '/v1/Transaction/GetStatisticTransactionByDate',
-				auth: false,
+				auth: {
+					strategies: ['AdminAuth'],
+					mode: 'required'
+				},
 			},
 			params: {
 				query: {
@@ -176,7 +179,10 @@ module.exports = {
 			rest: {
 				method: 'GET',
 				fullPath: '/v1/Transaction/GetStatisticTransactionByAccount',
-				auth: false,
+				auth: {
+					strategies: ['AdminAuth'],
+					mode: 'required'
+				},
 			},
 			params: {
 				query: {
@@ -194,7 +200,10 @@ module.exports = {
 			rest: {
 				method: 'GET',
 				fullPath: '/v1/Transaction/ExportStatisticTransactionByDate',
-				auth: false,
+				auth: {
+					strategies: ['AdminAuth'],
+					mode: 'required'
+				},
 			},
 			params: {
 				query: {
@@ -212,7 +221,10 @@ module.exports = {
 			rest: {
 				method: 'GET',
 				fullPath: '/v1/Transaction/ExportStatisticTransactionByAccount',
-				auth: false,
+				auth: {
+					strategies: ['AdminAuth'],
+					mode: 'required'
+				},
 			},
 			params: {
 				query: {

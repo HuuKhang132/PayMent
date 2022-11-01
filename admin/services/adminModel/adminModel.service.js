@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const DbService = require('moleculer-db');
 const MongooseAdapter = require('moleculer-db-adapter-mongoose');
 const MongooseAction = require('moleculer-db-adapter-mongoose-action');
-const AccountModel = require('./model/account.model');
+const AdminModel = require('./model/admin.model');
 
 module.exports = {
-	name: 'AccountModel',
+	name: 'AdminModel',
 
 	version: 1,
 
@@ -17,7 +17,7 @@ module.exports = {
 		keepAlive: true,
 	}),
 
-	model: AccountModel,
+	model: AdminModel,
 
 	/**
 	 * Settings

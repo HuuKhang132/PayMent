@@ -5,14 +5,13 @@ const tokenConstant = require('../../adminTokenModel/constants/tokenConstant')
 module.exports = async function (ctx) {
 	try {
 		const user = ctx.meta.auth.credentials
-        const signedOut = await this.broker.call('v1.TokenModel.findOneAndUpdate', [
+        const signedOut = await this.broker.call('v1.AdminTokenModel.findOneAndUpdate', [
             { jwtId: user.jti },
 			{ $set: { state: tokenConstant.STATE.SIGNEDOUT, logoutTime: new Date() } },
 			{ new: true }
         ])
 		console.log("signedOut  ", signedOut)
-
-		if ( signedOut.deletedCount === 0) {
+		if ( _.get(signedOut, 'jwtId', null) == null) {
 			return {
 				code: 1001,
 				message: this.__('failed'),
