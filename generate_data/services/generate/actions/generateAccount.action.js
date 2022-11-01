@@ -16,8 +16,8 @@ module.exports = async function (ctx) {
         const accountModel = client.db("test").collection("account");
 		const walletModel = client.db("test").collection("wallet");
 
-		// await accountModel.drop();
-		// await walletModel.drop();
+		await accountModel.drop();
+		await walletModel.drop();
 
 		const payload = ctx.params.body;
 

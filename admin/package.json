@@ -1,0 +1,61 @@
+{
+  "name": "account",
+  "version": "1.0.0",
+  "description": "My Moleculer-based microservices project",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --envfile env/dev/.env",
+    "start": "moleculer-runner --envfile env/dev/.env",
+    "cli": "moleculer connect NATS",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint services"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "jest": "^27.1.0",
+    "jest-cli": "^27.1.0",
+    "moleculer-repl": "^0.6.6"
+  },
+  "dependencies": {
+    "async-lock": "^1.3.2",
+    "bcrypt": "^5.1.0",
+    "device-uuid": "^1.0.4",
+    "dotenv": "^16.0.3",
+    "googleapis": "^108.0.0",
+    "ioredis": "^4.27.9",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "moleculer": "^0.14.16",
+    "moleculer-cron": "^0.0.2",
+    "moleculer-db": "^0.8.19",
+    "moleculer-db-adapter-mongoose": "^0.8.14",
+    "moleculer-db-adapter-mongoose-action": "^1.0.9",
+    "moleculer-i18n-js": "^1.0.3",
+    "moleculer-mail": "^2.0.0",
+    "moleculer-rabbitmq": "^1.2.0",
+    "mongoose": "^5.8.11",
+    "mongoose-auto-increment": "^5.0.1",
+    "mongoose-type-email": "^1.1.2",
+    "nanoid": "^4.0.0",
+    "nats": "^2.2.0",
+    "nodemailer": "^6.8.0",
+    "redlock": "^4.2.0",
+    "uuid": "^9.0.0"
+  },
+  "engines": {
+    "node": ">= 12.x.x"
+  },
+  "jest": {
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "rootDir": "./services",
+    "roots": [
+      "../test"
+    ]
+  }
+}

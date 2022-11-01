@@ -13,12 +13,12 @@ module.exports = async function (ctx) {
 		useUnifiedTopology: true,
 		keepAlive: true,
 	});
-    const userNumber = 1000000
+    const numberOfUser = 10000
 	try {
 		await client.connect();
         const transactionModel = client.db("test").collection("transaction");
 
-		await transactionModel.drop();
+		// await transactionModel.drop();
 
 		const payload = ctx.params.body;
 
@@ -70,11 +70,11 @@ module.exports = async function (ctx) {
 
             const total = (Math.floor(Math.random() * 10) + 1)*100
 
-            const walletId = Math.floor(Math.random() * userNumber) + 1;
-            let destWalletId = Math.floor(Math.random() * userNumber) + 1;
+            const walletId = Math.floor(Math.random() * numberOfUser) + 1;
+            let destWalletId = Math.floor(Math.random() * numberOfUser) + 1;
 
             while (destWalletId === walletId ) {
-                destWalletId = Math.floor(Math.random() * userNumber) + 1;
+                destWalletId = Math.floor(Math.random() * numberOfUser) + 1;
             }
 
 			createAt = faker.date.future(0.000008, previousTransactionCreateTime)
