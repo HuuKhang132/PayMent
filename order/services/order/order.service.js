@@ -94,7 +94,7 @@ module.exports = {
 			params: {
 				body: {
 					$$type: 'object',
-					orderId: 'string',
+					orderId: 'number',
                     paymentStatus: 'string',
 				},
 			},

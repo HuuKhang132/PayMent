@@ -4,7 +4,11 @@ const moment = require('moment')
 
 module.exports = async function (ctx) {
 	try {
-		const payload = ctx.params.query
+        const user = ctx.meta.auth.credentials
+        await this.broker.call('v1.Admin.adminAuth', {...user}) //authorization
+		
+        const payload = ctx.params.input
+
         moment.locale('vi');
 		let from = moment(payload.from, "DD/MM/YYYY").utc(true).toDate()
 		let to = moment(payload.to, "DD/MM/YYYY").add(1, 'days').utc(true).toDate()
@@ -13,7 +17,7 @@ module.exports = async function (ctx) {
 
         let matchQuery = {}
         if ( payload.accountId ) {
-            let user = await this.broker.call('v1.AccountModel.findOne', [{ id: parseInt(payload.accountId, 10) }])
+            let user = await this.broker.call('v1.AccountModel.findOne', [{ id: payload.accountId }])
             if (_.get(user, 'id', null) == null) {
                 return {
                     code: 1001,
@@ -59,7 +63,7 @@ module.exports = async function (ctx) {
                     }
                 },
             ]
-        ], { timeout: 60*1000 })
+        ])
 
         let transactionInfoList = {} 
     
@@ -102,7 +106,7 @@ module.exports = async function (ctx) {
                     }
                 },
             ]
-        ], { timeout: 60*1000 })
+        ])
 
         for ( let user of listUser ) {
             if ( transactionInfoList[`${user.walletId}`] ) {
@@ -119,12 +123,7 @@ module.exports = async function (ctx) {
         return {
 			code: 1000,
 			message: this.__("succeed"),
-            data: {
-                from: payload.from,
-                to: payload.to,
-                totalRecords: finalList.length,
-                list: finalList,
-            },
+            data: finalList,
 		};
 
 	} catch (err) {

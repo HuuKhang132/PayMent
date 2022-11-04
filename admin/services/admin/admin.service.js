@@ -31,7 +31,7 @@ module.exports = {
 		 * Actions
 		 */
 	actions: {
-		AdminAuth: {
+		adminAuth: {
 			registry: {
 				auth: {
 					name: "AdminAuth",

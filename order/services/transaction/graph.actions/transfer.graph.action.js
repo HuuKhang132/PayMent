@@ -4,9 +4,11 @@ const transactionConstant = require('../../transactionModel/constants/transactio
 
 module.exports = async function (ctx) {
 	try {
-		this.setLocale('vi')
-		const payload = ctx.params.body;
 		const user = ctx.meta.auth.credentials
+		await this.broker.call('v1.User.default', {...user}) //authorization
+
+		this.setLocale('vi')
+		const payload = ctx.params.input;
 
         const userWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: user.id}])
 		if (_.get(userWallet, 'id', null) === null) {
@@ -54,7 +56,7 @@ module.exports = async function (ctx) {
 			code: 1000,
 			message: this.__("succeed"),
             data: {
-                transaction: transactionCreate?.data?.transaction,
+                transaction: transactionCreate.data.transaction,
                 otp: transactionCreate.data.otp,
             }
 		};

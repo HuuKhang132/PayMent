@@ -18,7 +18,7 @@ module.exports = async function (ctx) {
 		await client.connect();
         const transactionModel = client.db("test").collection("transaction");
 
-		// await transactionModel.drop();
+		await transactionModel.drop();
 
 		const payload = ctx.params.body;
 

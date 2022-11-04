@@ -32,7 +32,7 @@ module.exports = {
 		 * Actions
 		 */
 	actions: {
-		Default: {
+		default: {
 			registry: {
 				auth: {
 					name: "Default",

@@ -5,8 +5,10 @@ const transactionConstant = require('../constants/transactionConstant')
 
 module.exports = async function (ctx) {
 	try {
-		const payload = ctx.params.body;
         const user = ctx.meta.auth.credentials
+		await this.broker.call('v1.User.default', {...user}) //authorization
+
+		const payload = ctx.params.input;
 
 		const userWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: user.id}])
 		if (_.get(userWallet, 'id', null) === null) {
@@ -63,7 +65,7 @@ module.exports = async function (ctx) {
 				data: {
 					url: "www.google.com",
 					transaction: transactionCreate.data.transaction,
-					order: orderCreate
+					order: orderCreate,
 				},
 			};
 		}
@@ -74,7 +76,7 @@ module.exports = async function (ctx) {
 				message: 'Số tiền trong tài khoản không đủ!',
 				data: {
 					order: orderCreate
-				},
+				}
 			};
 		}
 

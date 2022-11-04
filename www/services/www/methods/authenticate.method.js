@@ -22,7 +22,6 @@ module.exports = async function (ctx, route, req, authHandler) {
 	if (!_.isArray(authConf.strategies)) {
 		throw new MoleculerError('Invalid auth strategies', 500, null, authConf.strategies);
 	}
-
 	let flagStop = false;
 	let decoded;
 	let action;

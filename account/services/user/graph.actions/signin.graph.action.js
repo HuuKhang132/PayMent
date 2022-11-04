@@ -6,7 +6,7 @@ const uuid = require('uuid')
 
 module.exports = async function (ctx) {
 	try {
-		const payload = ctx.params.body;
+		const payload = ctx.params.input;
 
 		const userInfo = await this.broker.call('v1.AccountModel.findOne', [{username: payload.username, password: payload.password}]);
 
