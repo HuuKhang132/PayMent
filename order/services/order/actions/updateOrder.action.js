@@ -33,9 +33,7 @@ module.exports = async function (ctx) {
         return {
             code: 1000,
             message: this.__('succeed'),
-            data: {
-                order: updatedOrder
-            }
+            data: updatedOrder
         };
 	} catch (err) {
 		if (err.name === 'MoleculerError') throw err;

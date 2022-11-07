@@ -13,7 +13,7 @@ module.exports = async function (ctx) {
 			};
 		}
 
-		const responseUserInfo = _.pick(userInfo, ['fullname', 'email', 'phone', 'username', 'gender', 'avatar'])
+		const responseUserInfo = _.pick(userInfo, ['id', 'fullname', 'email', 'phone', 'username', 'gender', 'avatar'])
 
 		return {
 			code: 1000,

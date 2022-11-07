@@ -11,7 +11,9 @@ module.exports = async function (ctx) {
 		const page = parseInt(payload.page, 10)
 		const skip = (page - 1)*limit
 
-		const order = await this.broker.call('v1.OrderModel.findMany', [
+		const userInfo = await this.broker.call('v1.AccountModel.findOne', [{id: user.id}])
+
+		let listOrder = await this.broker.call('v1.OrderModel.findMany', [
 			{ userId: user.id },
 			null,
 			{ 
@@ -20,18 +22,26 @@ module.exports = async function (ctx) {
 				limit: limit,
 			}
 		])
-		if (_.isNil(order) && _.get(order[0], 'id', null) === null) {
+		if (_.isNil(listOrder) && _.get(listOrder[0], 'id', null) === null) {
 			return {
 				code: 1001,
 				message: this.__("failed"),
 			};
 		}
 
+		for ( let i = 0; i < listOrder.length; i++ ) {
+			listOrder[i] = {
+				user: userInfo,
+				...listOrder[i]
+			}
+			delete listOrder[i].userId
+		}
+
 		return {
 			code: 1000,
 			message: this.__("succeed"),
             data: {
-                listOrder: order
+                listOrder: listOrder
             },
 		};
 

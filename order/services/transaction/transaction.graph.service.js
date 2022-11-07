@@ -46,7 +46,13 @@ module.exports = {
 					},
 					IpnWithdraw: {
 						action: 'v1.Transaction.graph.ipnWithdraw'
-					}
+					},
+					ExportStatisticTransactionByDate: {
+						action: 'v1.Transaction.graph.exportStatisticTransactionByDate',
+					},
+                    ExportStatisticTransactionByAccount: {
+						action: 'v1.Transaction.graph.exportStatisticTransactionByAccount',
+					},
 				},
 			},
 		},
@@ -149,6 +155,44 @@ module.exports = {
 				},
 			},
 			handler: require('./graph.actions/ipnWithdraw.graph.action'),
+		},
+		exportStatisticTransactionByDate: {
+            params: {
+				input: {
+					$$type: 'object',
+					from: {
+						type: 'string',
+					},
+                    to: {
+						type: 'string',
+					},
+                    type: {
+						type: 'string',
+                        optional: true,
+					},
+
+				},
+			},
+			handler: require('./graph.actions/exportStatisticTransactionByDate.graph.action'),
+		},
+        exportStatisticTransactionByAccount: {
+			params: {
+				input: {
+					$$type: 'object',
+					from: {
+						type: 'string',
+					},
+                    to: {
+						type: 'string',
+					},
+                    accountId: {
+						type: 'number',
+                        optional: true,
+					},
+
+				},
+			},
+			handler: require('./graph.actions/exportStatisticTransactionByAccount.graph.action'),
 		},
 		TransactionOps: {
 			graphql: {

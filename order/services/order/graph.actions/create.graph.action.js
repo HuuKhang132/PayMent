@@ -10,6 +10,8 @@ module.exports = async function (ctx) {
 
 		const payload = ctx.params.input;
 
+		const userInfo = await this.broker.call('v1.AccountModel.findOne', [{id: user.id}])
+
 		const userWallet = await this.broker.call('v1.WalletModel.findOne', [{userId: user.id}])
 		if (_.get(userWallet, 'id', null) === null) {
 			return {
@@ -41,6 +43,11 @@ module.exports = async function (ctx) {
 				code: 1001,
 				message: this.__("failed"),
 			};
+		}
+
+		orderCreate = {
+			user: userInfo,
+			orderCreate
 		}
 
 		if ( payload.paymentMethod === orderConstant.PAYMENTMETHOD.BANK ){
@@ -80,7 +87,7 @@ module.exports = async function (ctx) {
 			};
 		}
 
-		const transactionCreate = await this.broker.call('v1.Transaction.create', {
+		let transactionCreate = await this.broker.call('v1.Transaction.create', {
             body: {
 				userId: user.id,
                 walletId: userWallet.id,
@@ -98,12 +105,16 @@ module.exports = async function (ctx) {
 				message: this.__("failed"),
 			}
 		}
+		transactionCreate.data.transaction = {
+			order: orderCreate,
+			...transactionCreate?.data?.transaction
+		}
 
 		return {
 			code: transactionCreate.code,
 			message: transactionCreate.message,
             data: {
-                transaction: transactionCreate.data.transaction,
+                transaction: transactionCreate?.data?.transaction,
                 otp: transactionCreate.data.otp,
             }
 		};

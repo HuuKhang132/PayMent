@@ -12,13 +12,13 @@ type OrderQuery {
 
 type GetAllOrderResponsed {
     code: Int
-    message: Int
+    message: String
     data: ListOrderData
 }
 
 type GetOrderResponsed{
     code: Int
-    message: Int
+    message: String
     data: Order
 }
 
@@ -28,7 +28,7 @@ type ListOrderData {
 
 type Order{
     id: Int
-    userId: Int,
+    user: User,
     total: Int,
 	description: String,
 	note: String,
@@ -45,7 +45,7 @@ type OrderMutation {
     "Thanh toán Đơn hàng"
     PayOrder(input: PayOrderInput): MoneyTransferResponsed
     "Thanh toán Đơn hàng"
-    Napas(input: NapasInput): NapasResponsed
+    Napas(input: NapasInput): Responsed
 }
 
 type CreateOrderResponsed {
@@ -59,10 +59,5 @@ type CreateOrderResponseData {
     order: Order
     transaction: Transaction
     otp: Int
-}
-
-type NapasResponsed {
-    code: Int
-    message: String
 }
 `;

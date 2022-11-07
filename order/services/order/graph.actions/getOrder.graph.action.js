@@ -8,13 +8,21 @@ module.exports = async function (ctx) {
 
         const orderId = ctx.params.input.id
 
-		const order = await this.broker.call('v1.OrderModel.findOne', [{userId: user.id, id: orderId}])
+		const userInfo = await this.broker.call('v1.AccountModel.findOne', [{id: user.id}])
+
+		let order = await this.broker.call('v1.OrderModel.findOne', [{userId: user.id, id: orderId}])
 		if (_.get(order, 'id', null) === null) {
 			return {
 				code: 1001,
 				message: this.__("failed"),
 			};
 		}
+
+		order = {
+			user: userInfo,
+			...order
+		}
+		delete order.userId
 
 		return {
 			code: 1000,

@@ -61,6 +61,11 @@ module.exports = async function (ctx) {
 			}
 		}
 
+		transactionCreate.data.transaction = {
+			order: order,
+			...transactionCreate.data.transaction
+		}
+
 		return {
 			code: 1000,
 			message: this.__('succeed'),

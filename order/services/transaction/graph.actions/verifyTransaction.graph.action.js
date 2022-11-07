@@ -106,6 +106,11 @@ module.exports = async function (ctx) {
                     message: this.__('updateOrderFailed'),
                 };
             }
+
+            updatedTransaction.data.transaction = {
+                order: updatedOrder.data,
+                ...updatedTransaction.data.transaction
+            }
         }
 
 		return {

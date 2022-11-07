@@ -33,7 +33,6 @@ type StatisticByAccount {
     fullname: String
     userId: Int
     email: String
-    date: String
     totalTransaction: Int
     totalSucceedTransaction: Int
     totalFailedTransaction: Int
@@ -56,6 +55,12 @@ type TransactionMutation {
 
     "Ngân hàng IPN xác nhận giao dịch"
     IpnWithdraw(input: IpnWithdrawInput): IpnWithdrawResponsed
+
+    "Export Excel Thống kê Transaction theo ngày"
+    ExportStatisticTransactionByDate(input: StatisticTransactionByDateInput): StatisticTransactionByDateResponsed
+
+    "Export Excel Thống kê Transaction theo tài khoản"
+    ExportStatisticTransactionByAccount(input: StatisticTransactionByAccountInput): StatisticTransactionByAccountResponsed
 }
 
 type TopUpResponsed {
@@ -94,7 +99,7 @@ type Transaction {
     walletId: Int
     destWalletId: Int
     status: String
-    orderId: Int
+    order: Order
     total: Int
     type: String
     supplierTransactionId: String

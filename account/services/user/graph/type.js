@@ -14,6 +14,7 @@ type UserInfoResponsed {
 }
 
 type User {
+    id: Int
     fullname: String
     email: String
     phone: String

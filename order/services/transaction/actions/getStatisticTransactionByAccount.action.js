@@ -6,8 +6,11 @@ module.exports = async function (ctx) {
 	try {
 		const payload = ctx.params.query
         moment.locale('vi');
-		let from = moment(payload.from, "DD/MM/YYYY").utc(true).toDate()
-		let to = moment(payload.to, "DD/MM/YYYY").add(1, 'days').utc(true).toDate()
+		// let from = moment(payload.from, "DD/MM/YYYY").utc(true).toDate()
+		// let to = moment(payload.to, "DD/MM/YYYY").add(1, 'days').utc(true).toDate()
+
+        let from = new Date(payload.from)
+        let to = new Date(payload.to)
 
         let finalList = []
 

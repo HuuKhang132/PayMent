@@ -135,8 +135,8 @@ module.exports = {
 		},
 		AccountOps: {
 			graphql: {
-				mutation: 'Account: AccountMutation',
 				query: 'Account: AccountQuery',
+				mutation: 'Account: AccountMutation',
 			},
 			handler(ctx) {
 				return true;
