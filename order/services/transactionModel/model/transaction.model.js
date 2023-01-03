@@ -1,20 +1,20 @@
-const mongoose = require('mongoose');
-const autoIncrement = require('mongoose-auto-increment');
-const _ = require('lodash');
-const transactionConstant = require('../constants/transactionConstant')
+const mongoose = require("mongoose");
+const autoIncrement = require("mongoose-auto-increment");
+const _ = require("lodash");
+const transactionConstant = require("../constants/transactionConstant");
 autoIncrement.initialize(mongoose);
 
 const Schema = mongoose.Schema({
-    walletId: {
-        type: Number,
-        require: true,
-        default: null,
-    },
-    destWalletId: {
-        type: Number,
-        require: true,
-        default: null,
-    },
+	walletId: {
+		type: Number,
+		require: true,
+		default: null,
+	},
+	destWalletId: {
+		type: Number,
+		require: true,
+		default: null,
+	},
 	status: {
 		type: String,
 		require: true,
@@ -23,13 +23,13 @@ const Schema = mongoose.Schema({
 	},
 	orderId: {
 		type: Number,
-        require: true,
-        default: null,
+		require: true,
+		default: null,
 	},
 	total: {
 		type: Number,
-        require: true,
-        default: null,
+		require: true,
+		default: null,
 	},
 	type: {
 		type: String,
@@ -48,11 +48,11 @@ const Schema = mongoose.Schema({
 		default: null,
 	}
 }, {
-	collection: 'transaction',
+	collection: "transaction",
 	versionKey: false,
 	timestamps: true,
 });
-
+Schema.index({ id: 1 }, { sparse: true, unique: true });
 /*
 | ==========================================================
 | Plugins
@@ -61,7 +61,7 @@ const Schema = mongoose.Schema({
 
 Schema.plugin(autoIncrement.plugin, {
 	model: `${Schema.options.collection}-id`,
-	field: 'id',
+	field: "id",
 	startAt: 1,
 	incrementBy: 1,
 });

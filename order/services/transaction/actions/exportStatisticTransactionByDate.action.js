@@ -3,13 +3,14 @@ const { MoleculerError } = require('moleculer').Errors;
 const XLSX = require('xlsx')
 const path = require('path')
 const uuid = require('uuid')
+const fs = require('fs')
 
 module.exports = async function (ctx) {
 	try {
-		const payload = ctx.params.query
+		const payload = ctx.params.body
 
         const getStatistic = await this.broker.call('v1.Transaction.getStatisticTransactionByDate', {
-            query: {
+            body: {
                 from: payload.from,
                 to: payload.to,
                 type: payload.type ? payload.type : null
@@ -40,7 +41,17 @@ module.exports = async function (ctx) {
                 workSheetColumnNames,
                 ...data
             ]
-            const workSheet = XLSX.utils.aoa_to_sheet(workSheetData)
+            let workSheet = XLSX.utils.aoa_to_sheet(workSheetData)
+
+            let wscols = [
+                { width: 15 },  // first column
+                { width: 25 }, // second column
+                { width: 25 }, //...
+                { width: 25 }, 
+              ];
+          
+            workSheet["!cols"] = wscols;
+
             XLSX.utils.book_append_sheet(workBook, workSheet, workSheetName)
             XLSX.writeFile(workBook, path.resolve(filePath))
             return true
@@ -48,18 +59,16 @@ module.exports = async function (ctx) {
 
         exportsList(finalList, workSheetColumnNames, workSheetName, filePath)
 
+        const downloadUrl = process.env.DOWNLOAD_PATH + '/v1/Transaction/DownloadFile/' + fileName
+
 		return {
 			code: 1000,
 			message: this.__("succeed"),
-            data: {
-                from: payload.from,
-                to: payload.to,
-                totalRecords: finalList.length,
-                list: finalList,
-            },
+            data: downloadUrl,
 		};
 
 	} catch (err) {
+        console.log("err  ", err)
 		if (err.name === 'MoleculerError') throw err;
 		throw new MoleculerError(`[Transaction] Get: ${err.message}`);
 	}

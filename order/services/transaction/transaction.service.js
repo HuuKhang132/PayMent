@@ -156,7 +156,7 @@ module.exports = {
 
 		getStatisticTransactionByDate: {
 			rest: {
-				method: 'GET',
+				method: 'POST',
 				fullPath: '/v1/Transaction/GetStatisticTransactionByDate',
 				auth: {
 					strategies: ['AdminAuth'],
@@ -164,7 +164,7 @@ module.exports = {
 				},
 			},
 			params: {
-				query: {
+				body: {
 					$$type: 'object',
 					from: 'string',
 					to: 'string',
@@ -177,7 +177,7 @@ module.exports = {
 
 		getStatisticTransactionByAccount: {
 			rest: {
-				method: 'GET',
+				method: 'POST',
 				fullPath: '/v1/Transaction/GetStatisticTransactionByAccount',
 				auth: {
 					strategies: ['AdminAuth'],
@@ -185,7 +185,7 @@ module.exports = {
 				},
 			},
 			params: {
-				query: {
+				body: {
 					$$type: 'object',
 					from: 'string',
 					to: 'string',
@@ -198,7 +198,7 @@ module.exports = {
 
 		exportStatisticTransactionByDate: {
 			rest: {
-				method: 'GET',
+				method: 'POST',
 				fullPath: '/v1/Transaction/ExportStatisticTransactionByDate',
 				auth: {
 					strategies: ['AdminAuth'],
@@ -206,7 +206,7 @@ module.exports = {
 				},
 			},
 			params: {
-				query: {
+				body: {
 					$$type: 'object',
 					from: 'string',
 					to: 'string',
@@ -219,7 +219,7 @@ module.exports = {
 
 		exportStatisticTransactionByAccount: {
 			rest: {
-				method: 'GET',
+				method: 'POST',
 				fullPath: '/v1/Transaction/ExportStatisticTransactionByAccount',
 				auth: {
 					strategies: ['AdminAuth'],
@@ -227,15 +227,31 @@ module.exports = {
 				},
 			},
 			params: {
-				query: {
+				body: {
 					$$type: 'object',
 					from: 'string',
 					to: 'string',
-					accountId: 'string | optional'
+					accountId: 'string | optional | null'
 				},
 			},
 			timeout: 90*1000,
 			handler: require('./actions/exportStatisticTransactionByAccount.action')
+		},
+
+		downloadFile: {
+			rest: {
+				method: 'GET',
+				fullPath: '/v1/Transaction/DownloadFile/:fileName',
+				auth: false
+			},
+			params: {
+				params: {
+					$$type: 'object',
+					fileName: 'string',
+				},
+			},
+			timeout: 90*1000,
+			handler: require('./actions/downloadFile.action')
 		},
 
 		bankApiExample: {
@@ -334,7 +350,7 @@ module.exports = {
 * Service created lifecycle event handler
 */
 	created() {
-
+		
 	},
 
 	/**

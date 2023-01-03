@@ -12,7 +12,7 @@ module.exports = async function (ctx) {
 		const payload = ctx.params.input
 
         const getStatistic = await this.broker.call('v1.Transaction.getStatisticTransactionByAccount', {
-            query: {
+            body: {
                 from: payload.from,
                 to: payload.to,
                 accountId: payload.accountId ? payload.accountId : null
@@ -53,6 +53,18 @@ module.exports = async function (ctx) {
                 ...data
             ]
             const workSheet = XLSX.utils.aoa_to_sheet(workSheetData)
+
+            let wscols = [
+                { width: 25 },
+                { width: 12 },
+                { width: 40 },
+                { width: 25 },
+                { width: 25 },
+                { width: 25 }, 
+              ];
+          
+            workSheet["!cols"] = wscols;
+            
             XLSX.utils.book_append_sheet(workBook, workSheet, workSheetName)
             XLSX.writeFile(workBook, path.resolve(filePath))
             return true
@@ -60,10 +72,12 @@ module.exports = async function (ctx) {
 
         exportsList(finalList, workSheetColumnNames, workSheetName, filePath)
 
+        const downloadUrl = process.env.DOWNLOAD_PATH + '/v1/Transaction/DownloadFile/' + fileName
+
         return {
 			code: 1000,
 			message: this.__("succeed"),
-            data: finalList
+            data: downloadUrl
 		};
 
 	} catch (err) {

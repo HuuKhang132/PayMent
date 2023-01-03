@@ -1,5 +1,4 @@
 const _ = require('lodash');
-
 const { MoleculerError } = require('moleculer').Errors;
 const changeBalanceConstant = require('../constants/changeBalanceConstant')
 

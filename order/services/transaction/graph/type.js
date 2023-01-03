@@ -57,10 +57,10 @@ type TransactionMutation {
     IpnWithdraw(input: IpnWithdrawInput): IpnWithdrawResponsed
 
     "Export Excel Thống kê Transaction theo ngày"
-    ExportStatisticTransactionByDate(input: StatisticTransactionByDateInput): StatisticTransactionByDateResponsed
+    ExportStatisticTransactionByDate(input: StatisticTransactionByDateInput): ExportStatisticTransactionResponsed
 
     "Export Excel Thống kê Transaction theo tài khoản"
-    ExportStatisticTransactionByAccount(input: StatisticTransactionByAccountInput): StatisticTransactionByAccountResponsed
+    ExportStatisticTransactionByAccount(input: StatisticTransactionByAccountInput): ExportStatisticTransactionResponsed
 }
 
 type TopUpResponsed {
@@ -104,5 +104,11 @@ type Transaction {
     type: String
     supplierTransactionId: String
     supplier: String
+}
+
+type ExportStatisticTransactionResponsed {
+    code: Int
+    message: String
+    data: String
 }
 `;
